@@ -54,6 +54,32 @@ impl CubeSat {
         self.orbit_parameters = Some(parameters);
         self
     }
+
+    pub fn print(&self) {
+        // Name
+        match &self.name {
+            Some(n) => println!("Name: {}", n),
+            None => println!("No name is set!"),
+        }
+
+        // Orbit
+        match &self.orbit_type {
+            Some(orbit::OrbitType::EquatorialCosine) => println!("\tOrbit: Equatorial cosine"),
+            None => println!("No orbit type is set!"),
+        }
+        match &self.orbit_parameters {
+            Some(p) => {
+                if let Some(r) = p.radius {
+                    println!("\t\tRadius: {} m", r);
+                }
+            }
+            None => println!("No orbit parameters are set!"),
+        }
+
+        // Time
+
+        // Vectors
+    }
 }
 
 pub fn foo() {
