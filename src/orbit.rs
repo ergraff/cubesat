@@ -14,9 +14,8 @@ impl OrbitParameters {
         OrbitParameters { radius: None }
     }
 
-    pub fn with_altitude(mut self, altitude: f64) -> Self {
-        self.radius = Some(RADIUS_EARTH + altitude);
-        self
+    pub fn set_radius(&mut self, radius: f64) {
+        self.radius = Some(RADIUS_EARTH + radius);
     }
 }
 
