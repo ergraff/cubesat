@@ -11,4 +11,6 @@ fn main() {
     time::foo();
     component::foo();
     orbit::foo();
+
+    let cubesat = cubesat::CubeSat::new("APTAS", 500.0, (0.0, 100.0, 1.0));
 }
