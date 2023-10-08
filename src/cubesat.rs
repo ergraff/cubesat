@@ -139,3 +139,21 @@ impl CubeSat {
 pub fn foo() {
     println!("Hello from cubesat.rs");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new() {
+        let none = CubeSat::new();
+        assert_eq!(none.name, Option::None);
+        assert_eq!(none.orbit_type, Option::None);
+        assert_eq!(none.orbit_parameters, Option::None);
+        assert_eq!(none.time, Option::None);
+        assert_eq!(none.pos, Option::None);
+        assert_eq!(none.vel, Option::None);
+        assert_eq!(none.vel, Option::None);
+        assert_eq!(none.rot, Option::None);
+    }
+}
