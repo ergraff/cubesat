@@ -60,6 +60,26 @@ impl CubeSat {
         self
     }
 
+    pub fn with_position(mut self, position: (f64, f64, f64)) -> Self {
+        self.pos = Some(vector::Vector3::new(position));
+        self
+    }
+
+    pub fn with_velocity(mut self, velocity: (f64, f64, f64)) -> Self {
+        self.vel = Some(vector::Vector3::new(velocity));
+        self
+    }
+
+    pub fn with_acceleration(mut self, acceleration: (f64, f64, f64)) -> Self {
+        self.acc = Some(vector::Vector3::new(acceleration));
+        self
+    }
+
+    pub fn with_rotation(mut self, rotation: (f64, f64, f64)) -> Self {
+        self.rot = Some(vector::Vector3::new(rotation));
+        self
+    }
+
     pub fn print(&self) {
         // Name
         match &self.name {
@@ -93,6 +113,26 @@ impl CubeSat {
         }
 
         // Vectors
+        println!("\tPosition:");
+        match &self.pos {
+            Some(p) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", p.x, p.y, p.z),
+            None => println!("No position has been set!"),
+        }
+        println!("\tVelocity:");
+        match &self.vel {
+            Some(v) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", v.x, v.y, v.z),
+            None => println!("No velocity has been set!"),
+        }
+        println!("\tAcceleration:");
+        match &self.acc {
+            Some(a) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", a.x, a.y, a.z),
+            None => println!("No acceleration has been set!"),
+        }
+        println!("\tRotation:");
+        match &self.rot {
+            Some(r) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", r.x, r.y, r.z),
+            None => println!("No rotation has been set!"),
+        }
     }
 }
 
