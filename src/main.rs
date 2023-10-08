@@ -14,6 +14,7 @@ fn main() {
 
     let cubesat = cubesat::CubeSat::new()
         .with_name("APTAS")
+        .with_time(0.0, 100.0, 1.0)
         .with_orbit_type("equatorial cosine")
         .with_orbit_parameters(vec![("radius", 500_000.0)]);
 

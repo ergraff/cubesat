@@ -8,7 +8,7 @@ pub struct Time {
 impl Time {
     pub fn new(start_time: f64, end_time: f64, time_step: f64) -> Self {
         Time {
-            now: 0.0,
+            now: start_time,
             step: time_step,
             start: start_time,
             end: end_time, // 1 Day

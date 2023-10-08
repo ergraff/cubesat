@@ -32,6 +32,11 @@ impl CubeSat {
         self
     }
 
+    pub fn with_time(mut self, start: f64, end: f64, step: f64) -> Self {
+        self.time = Some(time::Time::new(start, end, step));
+        self
+    }
+
     pub fn with_orbit_type(mut self, orbit_type: &str) -> Self {
         match orbit_type {
             "equatorial cosine" => self.orbit_type = Some(orbit::OrbitType::EquatorialCosine),
@@ -63,8 +68,9 @@ impl CubeSat {
         }
 
         // Orbit
+        println!("\tOrbit:");
         match &self.orbit_type {
-            Some(orbit::OrbitType::EquatorialCosine) => println!("\tOrbit: Equatorial cosine"),
+            Some(orbit::OrbitType::EquatorialCosine) => println!("\t\tType: Equatorial cosine"),
             None => println!("No orbit type is set!"),
         }
         match &self.orbit_parameters {
@@ -77,6 +83,14 @@ impl CubeSat {
         }
 
         // Time
+        println!("\tTime:");
+        match &self.time {
+            Some(t) => println!(
+                "\t\tNow: {} s\n\t\tStart: {} s\n\t\tEnd: {} s\n\t\tStep: {} s",
+                t.now, t.start, t.end, t.step
+            ),
+            None => println!("No time values have been set!"),
+        }
 
         // Vectors
     }
