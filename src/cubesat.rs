@@ -1,3 +1,4 @@
+use crate::component;
 use crate::orbit;
 use crate::time;
 use crate::vector;
@@ -11,6 +12,7 @@ pub struct CubeSat {
     pub vel: Option<vector::Vector3>,
     pub acc: Option<vector::Vector3>,
     pub rot: Option<vector::Vector3>,
+    pub solar_panels: Option<Vec<component::SolarPanel>>,
 }
 
 impl CubeSat {
@@ -24,6 +26,7 @@ impl CubeSat {
             vel: None,
             acc: None,
             rot: None,
+            solar_panels: None,
         }
     }
 
@@ -80,6 +83,20 @@ impl CubeSat {
         self
     }
 
+    pub fn with_solar_panels(
+        mut self,
+        orientations: Vec<(f64, f64, f64)>,
+        power_generation: f64,
+    ) -> Self {
+        let mut solar_panels = vec![];
+        for orientation in orientations {
+            let panel = component::SolarPanel::new(power_generation, orientation);
+            solar_panels.push(panel);
+        }
+        self.solar_panels = Some(solar_panels);
+        self
+    }
+
     pub fn print(&self) {
         // Name
         match &self.name {
@@ -132,6 +149,20 @@ impl CubeSat {
         match &self.rot {
             Some(r) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", r.x, r.y, r.z),
             None => println!("No rotation has been set!"),
+        }
+
+        // Components
+        println!("\tSolar panels ({}x):", &self.solar_panels.iter().len());
+        if let Some(panels) = &self.solar_panels {
+            for panel in panels {
+                println!(
+                    "\t\t({}, {}, {}), {} W",
+                    panel.orientation.x,
+                    panel.orientation.y,
+                    panel.orientation.z,
+                    panel.power_generation
+                );
+            }
         }
     }
 }
