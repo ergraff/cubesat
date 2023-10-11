@@ -32,7 +32,17 @@ impl Vector3 {
     }
 
     pub fn angle_to(&self, other: &Vector3) -> f64 {
-        (self.dot(other) / (other.abs() * other.abs())).acos()
+        let term1 = self.dot(&other);
+        let term2 = self.abs() * other.abs();
+        let mut frac = term1 / term2;
+        if frac < -1.0 {
+            frac = -1.0
+        }
+        if frac > 1.0 {
+            frac = 1.0
+        }
+        let angle = frac.acos();
+        angle
     }
 
     pub fn rot_x(self, angle: f64) -> Self {
@@ -209,7 +219,47 @@ mod tests {
     }
 
     #[test]
-    fn angle_to() {}
+    fn angle_to() {
+        let origin = Vector3::origin();
+        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
+        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
+        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
+        let pos_all_one = Vector3::new((1.0, 1.0, 1.0));
+        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
+        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
+        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+        let neg_all_one = Vector3::new((-1.0, -1.0, -1.0));
+
+        assert!(origin.angle_to(&origin).is_nan());
+        assert!(origin.angle_to(&pos_unit_x).is_nan());
+        assert!(origin.angle_to(&pos_unit_y).is_nan());
+        assert!(origin.angle_to(&pos_unit_z).is_nan());
+        assert!(origin.angle_to(&pos_all_one).is_nan());
+        assert!(origin.angle_to(&neg_unit_x).is_nan());
+        assert!(origin.angle_to(&neg_unit_y).is_nan());
+        assert!(origin.angle_to(&neg_unit_z).is_nan());
+        assert!(origin.angle_to(&neg_all_one).is_nan());
+
+        assert_eq!(pos_unit_x.angle_to(&pos_unit_x), 0.0);
+        assert_eq!(
+            pos_unit_x.angle_to(&pos_unit_y),
+            std::f64::consts::FRAC_PI_2
+        );
+        assert_eq!(
+            pos_unit_x.angle_to(&pos_unit_z),
+            std::f64::consts::FRAC_PI_2
+        );
+        assert_eq!(
+            pos_unit_x.angle_to(&pos_all_one),
+            (1.0 / (3.0_f64.sqrt())).acos()
+        );
+        assert_eq!(pos_unit_x.angle_to(&neg_unit_x), std::f64::consts::PI);
+        assert_eq!(pos_unit_y.angle_to(&neg_unit_y), std::f64::consts::PI);
+        assert_eq!(pos_unit_z.angle_to(&neg_unit_z), std::f64::consts::PI);
+
+        assert_eq!(pos_all_one.angle_to(&neg_all_one), std::f64::consts::PI);
+        assert_eq!(neg_all_one.angle_to(&pos_all_one), std::f64::consts::PI);
+    }
 
     #[test]
     fn rot_x() {}
