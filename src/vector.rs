@@ -46,27 +46,57 @@ impl Vector3 {
     }
 
     pub fn rot_x(self, angle: f64) -> Self {
-        Vector3 {
-            x: self.x,
-            y: angle.cos() * self.y - angle.sin() * self.z,
-            z: angle.sin() * self.y + angle.cos() * self.z,
+        let mut x = self.x;
+        let mut y = angle.cos() * self.y - angle.sin() * self.z;
+        let mut z = angle.sin() * self.y + angle.cos() * self.z;
+        // Round very-near-zero to zero
+        let epsilon = std::f64::EPSILON;
+        if x.abs() < epsilon {
+            x = 0.0
         }
+        if y.abs() < epsilon {
+            y = 0.0
+        }
+        if z.abs() < epsilon {
+            z = 0.0
+        }
+        Vector3 { x, y, z }
     }
 
     pub fn rot_y(self, angle: f64) -> Self {
-        Vector3 {
-            x: angle.cos() * self.x + angle.sin() * self.z,
-            y: self.y,
-            z: -angle.sin() * self.x + angle.cos() * self.z,
+        let mut x = angle.cos() * self.x + angle.sin() * self.z;
+        let mut y = self.y;
+        let mut z = -angle.sin() * self.x + angle.cos() * self.z;
+        // Round very-near-zero to zero
+        let epsilon = std::f64::EPSILON;
+        if x.abs() < epsilon {
+            x = 0.0
         }
+        if y.abs() < epsilon {
+            y = 0.0
+        }
+        if z.abs() < epsilon {
+            z = 0.0
+        }
+        Vector3 { x, y, z }
     }
 
     pub fn rot_z(self, angle: f64) -> Self {
-        Vector3 {
-            x: angle.cos() * self.x - angle.sin() * self.y,
-            y: angle.sin() * self.x + angle.cos() * self.y,
-            z: self.z,
+        let mut x = angle.cos() * self.x - angle.sin() * self.y;
+        let mut y = angle.sin() * self.x + angle.cos() * self.y;
+        let mut z = self.z;
+        // Round very-near-zero to zero
+        let epsilon = std::f64::EPSILON;
+        if x.abs() < epsilon {
+            x = 0.0
         }
+        if y.abs() < epsilon {
+            y = 0.0
+        }
+        if z.abs() < epsilon {
+            z = 0.0
+        }
+        Vector3 { x, y, z }
     }
 
     pub fn with_rotation(&self, rotation: &Vector3) -> Self {
@@ -262,13 +292,111 @@ mod tests {
     }
 
     #[test]
-    fn rot_x() {}
+    fn rot_x() {
+        let origin = Vector3::origin();
+        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
+        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
+        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
+        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
+        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
+        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+
+        assert_eq!(origin.rot_x(std::f64::consts::FRAC_PI_2), origin);
+        assert_eq!(origin.rot_x(std::f64::consts::PI), origin);
+
+        assert_eq!(pos_unit_x.rot_x(std::f64::consts::PI), pos_unit_x);
+        assert_eq!(neg_unit_x.rot_x(std::f64::consts::PI), neg_unit_x);
+
+        assert_eq!(pos_unit_y.rot_x(std::f64::consts::FRAC_PI_2), pos_unit_z);
+        assert_eq!(pos_unit_y.rot_x(std::f64::consts::PI), neg_unit_y);
+
+        assert_eq!(pos_unit_z.rot_x(std::f64::consts::FRAC_PI_2), neg_unit_y);
+        assert_eq!(pos_unit_z.rot_x(std::f64::consts::PI), neg_unit_z);
+    }
 
     #[test]
-    fn rot_y() {}
+    fn rot_y() {
+        let origin = Vector3::origin();
+        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
+        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
+        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
+        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
+        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
+        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+
+        assert_eq!(origin.rot_y(std::f64::consts::FRAC_PI_2), origin);
+        assert_eq!(origin.rot_y(std::f64::consts::PI), origin);
+
+        assert_eq!(pos_unit_x.rot_y(std::f64::consts::FRAC_PI_2), neg_unit_z);
+        assert_eq!(pos_unit_x.rot_y(std::f64::consts::PI), neg_unit_x);
+
+        assert_eq!(pos_unit_y.rot_y(std::f64::consts::PI), pos_unit_y);
+        assert_eq!(neg_unit_y.rot_y(std::f64::consts::PI), neg_unit_y);
+
+        assert_eq!(pos_unit_z.rot_y(std::f64::consts::FRAC_PI_2), pos_unit_x);
+        assert_eq!(pos_unit_z.rot_y(std::f64::consts::PI), neg_unit_z);
+    }
 
     #[test]
-    fn rot_z() {}
+    fn rot_z() {
+        let origin = Vector3::origin();
+        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
+        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
+        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
+        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
+        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
+        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+
+        assert_eq!(origin.rot_z(std::f64::consts::FRAC_PI_2), origin);
+        assert_eq!(origin.rot_z(std::f64::consts::PI), origin);
+
+        assert_eq!(pos_unit_x.rot_z(std::f64::consts::FRAC_PI_2), pos_unit_y);
+        assert_eq!(pos_unit_x.rot_z(std::f64::consts::PI), neg_unit_x);
+
+        assert_eq!(pos_unit_y.rot_z(std::f64::consts::FRAC_PI_2), neg_unit_x);
+        assert_eq!(pos_unit_y.rot_z(std::f64::consts::PI), neg_unit_y);
+
+        assert_eq!(pos_unit_z.rot_z(std::f64::consts::PI), pos_unit_z);
+        assert_eq!(neg_unit_z.rot_z(std::f64::consts::PI), neg_unit_z);
+    }
+
+    #[test]
+    fn rot_xyz() {
+        let origin = Vector3::origin();
+        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
+        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
+        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
+        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+
+        assert_eq!(
+            origin
+                .rot_x(std::f64::consts::PI)
+                .rot_y(std::f64::consts::PI)
+                .rot_z(std::f64::consts::PI),
+            origin
+        );
+        assert_eq!(
+            pos_unit_x
+                .rot_x(std::f64::consts::FRAC_PI_2)
+                .rot_y(std::f64::consts::FRAC_PI_2)
+                .rot_z(std::f64::consts::FRAC_PI_2),
+            neg_unit_z
+        );
+        assert_eq!(
+            pos_unit_y
+                .rot_x(std::f64::consts::FRAC_PI_2)
+                .rot_y(std::f64::consts::FRAC_PI_2)
+                .rot_z(std::f64::consts::FRAC_PI_2),
+            pos_unit_y
+        );
+        assert_eq!(
+            pos_unit_z
+                .rot_x(std::f64::consts::FRAC_PI_2)
+                .rot_y(std::f64::consts::FRAC_PI_2)
+                .rot_z(std::f64::consts::FRAC_PI_2),
+            pos_unit_x
+        );
+    }
 
     #[test]
     fn with_rotation() {}
