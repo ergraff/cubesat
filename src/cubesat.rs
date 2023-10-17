@@ -104,6 +104,46 @@ impl CubeSat {
         self
     }
 
+    pub fn in_eclipse(&self) -> bool {
+        // Guards
+        let sun = &self.sun.expect("No sun is set!");
+        let pos = &self.pos.expect("No position vector is set!");
+
+        // The conditions are:
+        // 1. 0 <= |pos| * sin(acos(( dot(pos,sun)) / (|pos|*|sun|) ))  <= RADIUS_EARTH
+        // 2. Angle between position and sun vectors is less than PI/2
+        let pos_dot_sun = pos.dot(sun);
+        let pos_times_sun = pos.abs() * sun.abs();
+        let inner = pos_dot_sun / pos_times_sun;
+
+        // Evaluate angle
+        let angle = inner.acos();
+        if angle.is_nan() {
+            panic!("angle is NaN!");
+        }
+
+        // Evaluate result
+        let result = pos.abs() * angle.sin();
+        (0.0 <= result && result <= orbit::RADIUS_EARTH) && (angle < std::f64::consts::FRAC_PI_2)
+    }
+
+    pub fn get_power_generation(&self) -> f64 {
+        // Guards
+        let panels = self
+            .solar_panels
+            .as_ref()
+            .expect("No solar panels are set!");
+        let sun = &self.sun.expect("No sun is set!");
+
+        // In eclipse, no power generation
+        if self.in_eclipse() {
+            return 0.0;
+        }
+
+        // In sun
+        panels.iter().map(|p| p.power_generation(sun)).sum()
+    }
+
     pub fn print(&self) {
         // Name
         match &self.name {
