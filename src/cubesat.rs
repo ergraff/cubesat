@@ -144,6 +144,13 @@ impl CubeSat {
         panels.iter().map(|p| p.power_generation(sun)).sum()
     }
 
+    pub fn update_orbit(&mut self) {
+        match self.orbit_type {
+            Some(orbit::OrbitType::EquatorialCosine) => orbit::orbit_equatorial_cosine(self),
+            None => panic!("No orbit type is set!"),
+        }
+    }
+
     pub fn print(&self) {
         // Name
         match &self.name {
