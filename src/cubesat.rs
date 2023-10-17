@@ -12,6 +12,7 @@ pub struct CubeSat {
     pub vel: Option<vector::Vector3>,
     pub acc: Option<vector::Vector3>,
     pub rot: Option<vector::Vector3>,
+    pub sun: Option<vector::Vector3>,
     pub solar_panels: Option<Vec<component::SolarPanel>>,
 }
 
@@ -26,6 +27,7 @@ impl CubeSat {
             vel: None,
             acc: None,
             rot: None,
+            sun: None,
             solar_panels: None,
         }
     }
@@ -97,6 +99,11 @@ impl CubeSat {
         self
     }
 
+    pub fn with_sun(mut self, sun: (f64, f64, f64)) -> Self {
+        self.sun = Some(vector::Vector3::new(sun));
+        self
+    }
+
     pub fn print(&self) {
         // Name
         match &self.name {
@@ -150,9 +157,18 @@ impl CubeSat {
             Some(r) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", r.x, r.y, r.z),
             None => println!("No rotation has been set!"),
         }
+        println!("\tSun:");
+        match &self.sun {
+            Some(s) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", s.x, s.y, s.z),
+            None => println!("No sun has been set!"),
+        }
 
         // Components
-        println!("\tSolar panels ({}x):", &self.solar_panels.iter().len());
+        let number = match &self.solar_panels {
+            Some(v) => v.iter().len(),
+            None => 0,
+        };
+        println!("\tSolar panels ({}x):", number);
         if let Some(panels) = &self.solar_panels {
             for panel in panels {
                 println!(

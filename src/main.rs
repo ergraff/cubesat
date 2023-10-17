@@ -20,6 +20,7 @@ fn main() {
         .with_position((0.0, 0.0, 0.0))
         .with_velocity((0.0, 0.0, 0.0))
         .with_acceleration((0.0, 0.0, 0.0))
+        .with_sun((0.0, 0.0, 0.0))
         .with_rotation((0.0, 0.0, 0.0))
         .with_solar_panels(
             vec![
