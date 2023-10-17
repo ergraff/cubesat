@@ -99,13 +99,6 @@ impl Vector3 {
         Vector3 { x, y, z }
     }
 
-    pub fn with_rotation(&self, rotation: &Vector3) -> Self {
-        self.clone()
-            .rot_x(rotation.x)
-            .rot_y(rotation.y)
-            .rot_z(rotation.z)
-    }
-
     pub fn negative(&self) -> Self {
         Vector3 {
             x: -self.x,
@@ -397,7 +390,4 @@ mod tests {
             pos_unit_x
         );
     }
-
-    #[test]
-    fn with_rotation() {}
 }
