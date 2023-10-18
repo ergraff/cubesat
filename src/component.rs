@@ -1,5 +1,6 @@
 use crate::vector;
 
+#[derive(Debug, PartialEq)]
 pub struct SolarPanel {
     pub orientation: vector::Vector3,
     pub power_generation: f64, // [W]
