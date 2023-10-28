@@ -108,10 +108,6 @@ impl Vector3 {
     }
 }
 
-pub fn foo() {
-    println!("Hello from vector.rs");
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

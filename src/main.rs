@@ -5,13 +5,6 @@ mod time;
 mod vector;
 
 fn main() {
-    println!("Hello, world!");
-    cubesat::foo();
-    vector::foo();
-    time::foo();
-    component::foo();
-    orbit::foo();
-
     let cubesat = cubesat::CubeSat::new()
         .with_name("APTAS")
         .with_time(0.0, 100.0, 1.0)

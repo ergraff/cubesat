@@ -233,10 +233,6 @@ impl CubeSat {
     }
 }
 
-pub fn foo() {
-    println!("Hello from cubesat.rs");
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

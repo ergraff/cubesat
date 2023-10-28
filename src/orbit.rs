@@ -26,10 +26,6 @@ impl OrbitParameters {
     }
 }
 
-pub fn foo() {
-    println!("Hello from orbit.rs");
-}
-
 pub fn orbit_equatorial_cosine(cubesat: &mut cubesat::CubeSat) {
     // Guards and values
     let r = cubesat

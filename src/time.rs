@@ -21,10 +21,6 @@ impl Time {
     }
 }
 
-pub fn foo() {
-    println!("Hello from time.rs");
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
