@@ -14,6 +14,7 @@ pub struct CubeSat {
     pub rot: Option<vector::Vector3>,
     pub sun: Option<vector::Vector3>,
     pub solar_panels: Option<Vec<component::SolarPanel>>,
+    pub active: bool,
 }
 
 impl CubeSat {
@@ -29,6 +30,7 @@ impl CubeSat {
             rot: None,
             sun: None,
             solar_panels: None,
+            active: true,
         }
     }
 
@@ -151,6 +153,39 @@ impl CubeSat {
             }
         } else {
             panic!("No orbit type is set!");
+        }
+    }
+
+    pub fn iterate(&mut self) {
+        match self.time {
+            Some(ref mut t) => {
+                self.active = t.now < t.end && self.active;
+                t.next();
+            }
+            None => panic!("No time is set!"),
+        }
+    }
+
+    pub fn simulate(&mut self) {
+        // Loop unti end
+        while self.active {
+            // Update orbit
+            self.update_orbit();
+
+            // DEBUG Print
+            self.print();
+
+            // Calculate power generation
+            let generation = self.get_power_generation();
+
+            // Calculate power consumption TODO
+
+            // Current net power TODO
+
+            // Update battery TODO
+
+            // Next time step
+            self.iterate();
         }
     }
 
@@ -505,5 +540,15 @@ mod tests {
 
         let cubesat_mz = cubesat_z.with_sun((0.0, 0.0, -1.0));
         assert_eq!(cubesat_mz.get_power_generation(), 1.0);
+    }
+
+    #[test]
+    fn iterate() {
+        let mut cubesat = CubeSat::new().with_time(0.0, 10.0, 1.0);
+        for _ in 0..11 {
+            assert_eq!(cubesat.active, true);
+            cubesat.iterate();
+        }
+        assert_eq!(cubesat.active, false);
     }
 }

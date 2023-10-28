@@ -5,7 +5,7 @@ mod time;
 mod vector;
 
 fn main() {
-    let cubesat = cubesat::CubeSat::new()
+    let mut cubesat = cubesat::CubeSat::new()
         .with_name("APTAS")
         .with_time(0.0, 100.0, 1.0)
         .with_orbit_type("equatorial cosine")
@@ -13,7 +13,7 @@ fn main() {
         .with_position((0.0, 0.0, 0.0))
         .with_velocity((0.0, 0.0, 0.0))
         .with_acceleration((0.0, 0.0, 0.0))
-        .with_sun((0.0, 0.0, 0.0))
+        .with_sun((1.0, 0.0, 0.0))
         .with_rotation((0.0, 0.0, 0.0))
         .with_solar_panels(
             vec![
@@ -28,4 +28,6 @@ fn main() {
         );
 
     cubesat.print();
+    cubesat.simulate();
+    println!("Simulation ended");
 }
