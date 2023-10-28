@@ -145,9 +145,12 @@ impl CubeSat {
     }
 
     pub fn update_orbit(&mut self) {
-        match self.orbit_type {
-            Some(orbit::OrbitType::EquatorialCosine) => orbit::orbit_equatorial_cosine(self),
-            None => panic!("No orbit type is set!"),
+        if let Some(orbit_type) = &self.orbit_type {
+            match orbit_type {
+                orbit::OrbitType::EquatorialCosine => orbit::orbit_equatorial_cosine(self),
+            }
+        } else {
+            panic!("No orbit type is set!");
         }
     }
 
