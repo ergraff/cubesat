@@ -13,7 +13,7 @@ fn main() {
         .with_position(0.0, 0.0, 0.0)
         .with_velocity(0.0, 0.0, 0.0)
         .with_acceleration(0.0, 0.0, 0.0)
-        .with_sun(1.0, 0.0, 0.0)
+        .with_sun(-1.0, 0.0, 0.0)
         .with_rotation(0.0, 0.0, 0.0)
         .with_solar_panels(
             vec![
@@ -25,7 +25,9 @@ fn main() {
                 (0.0, 0.0, -1.0),
             ],
             1.0,
-        );
+        )
+        .with_eps(-1.0, 10.0)
+        .with_component("ADCS", -1.0);
 
     cubesat.print();
     cubesat.simulate();

@@ -5,22 +5,31 @@ use crate::vector;
 
 pub struct CubeSat {
     pub name: Option<String>,
+    pub active: bool,
+
+    // Orbit
     pub orbit_type: Option<orbit::OrbitType>,
     pub orbit_parameters: Option<orbit::OrbitParameters>,
     pub time: Option<time::Time>,
+
+    // Vectors
     pub pos: Option<vector::Vector3>,
     pub vel: Option<vector::Vector3>,
     pub acc: Option<vector::Vector3>,
     pub rot: Option<vector::Vector3>,
     pub sun: Option<vector::Vector3>,
+
+    // Components
     pub solar_panels: Option<Vec<component::SolarPanel>>,
-    pub active: bool,
+    pub eps: Option<component::Eps>,
+    pub components: Option<Vec<component::Component>>,
 }
 
 impl CubeSat {
     pub fn new() -> Self {
         CubeSat {
             name: None,
+            active: true,
             orbit_type: None,
             orbit_parameters: None,
             time: None,
@@ -30,7 +39,8 @@ impl CubeSat {
             rot: None,
             sun: None,
             solar_panels: None,
-            active: true,
+            eps: None,
+            components: None,
         }
     }
 
@@ -87,6 +97,11 @@ impl CubeSat {
         self
     }
 
+    pub fn with_sun(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.sun = Some(vector::Vector3::new(x, y, z));
+        self
+    }
+
     pub fn with_solar_panels(
         mut self,
         orientations: Vec<(f64, f64, f64)>,
@@ -106,8 +121,18 @@ impl CubeSat {
         self
     }
 
-    pub fn with_sun(mut self, x: f64, y: f64, z: f64) -> Self {
-        self.sun = Some(vector::Vector3::new(x, y, z));
+    pub fn with_eps(mut self, power_consumption: f64, max_charge: f64) -> Self {
+        self.eps = Some(component::Eps::new(power_consumption, max_charge));
+        self
+    }
+
+    pub fn with_component(mut self, name: &str, power_consumption: f64) -> Self {
+        match self.components {
+            Some(ref mut c) => c.push(component::Component::new(name, power_consumption)),
+            None => {
+                self.components = Some(vec![component::Component::new(name, power_consumption)])
+            }
+        }
         self
     }
 
@@ -151,6 +176,17 @@ impl CubeSat {
         panels.iter().map(|p| p.power_generation(sun)).sum()
     }
 
+    pub fn get_power_consumption(&self) -> f64 {
+        let mut consumption = 0.0;
+        if let Some(eps) = &self.eps {
+            consumption += eps.consumption;
+        }
+        if let Some(components) = &self.components {
+            consumption += components.iter().map(|c| c.consumption).sum::<f64>();
+        }
+        consumption
+    }
+
     pub fn update_orbit(&mut self) {
         if let Some(orbit_type) = &self.orbit_type {
             match orbit_type {
@@ -172,7 +208,7 @@ impl CubeSat {
     }
 
     pub fn simulate(&mut self) {
-        // Loop unti end
+        // Loop until end
         while self.active {
             // Update orbit
             self.update_orbit();
@@ -183,11 +219,16 @@ impl CubeSat {
             // Calculate power generation
             let generation = self.get_power_generation();
 
-            // Calculate power consumption TODO
+            // Calculate power consumption
+            let consumption = self.get_power_consumption();
 
-            // Current net power TODO
+            // Current net power
+            let power = generation + consumption;
 
-            // Update battery TODO
+            // Update battery
+            let step = self.time.as_ref().expect("No time is set!").step;
+            let eps = self.eps.as_mut().expect("No EPS is set!");
+            eps.update_capacity(power, step);
 
             // Next time step
             self.iterate();
@@ -205,7 +246,7 @@ impl CubeSat {
         println!("\tOrbit:");
         match &self.orbit_type {
             Some(orbit::OrbitType::EquatorialCosine) => println!("\t\tType: Equatorial cosine"),
-            None => println!("No orbit type is set!"),
+            None => println!("\t\tNo orbit type is set!"),
         }
         match &self.orbit_parameters {
             Some(p) => {
@@ -213,7 +254,7 @@ impl CubeSat {
                     println!("\t\tRadius: {} m", r);
                 }
             }
-            None => println!("No orbit parameters are set!"),
+            None => println!("\t\tNo orbit parameters are set!"),
         }
 
         // Time
@@ -223,37 +264,41 @@ impl CubeSat {
                 "\t\tNow: {} s\n\t\tStart: {} s\n\t\tEnd: {} s\n\t\tStep: {} s",
                 t.now, t.start, t.end, t.step
             ),
-            None => println!("No time values have been set!"),
+            None => println!("\t\tNo time values have been set!"),
         }
 
         // Vectors
         println!("\tPosition:");
         match &self.pos {
-            Some(p) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", p.x, p.y, p.z),
-            None => println!("No position has been set!"),
+            Some(p) => println!("\t\tx: {} m\n\t\ty: {} m\n\t\tz: {} m", p.x, p.y, p.z),
+            None => println!("\t\tNo position has been set!"),
         }
         println!("\tVelocity:");
         match &self.vel {
-            Some(v) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", v.x, v.y, v.z),
-            None => println!("No velocity has been set!"),
+            Some(v) => println!("\t\tx: {} m/s\n\t\ty: {} m/s\n\t\tz: {} m/s", v.x, v.y, v.z),
+            None => println!("\t\tNo velocity has been set!"),
         }
         println!("\tAcceleration:");
         match &self.acc {
-            Some(a) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", a.x, a.y, a.z),
-            None => println!("No acceleration has been set!"),
+            Some(a) => println!(
+                "\t\tx: {} m/s²\n\t\ty: {} m/s²\n\t\tz: {} m/s²",
+                a.x, a.y, a.z
+            ),
+            None => println!("\t\tNo acceleration has been set!"),
         }
         println!("\tRotation:");
         match &self.rot {
-            Some(r) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", r.x, r.y, r.z),
-            None => println!("No rotation has been set!"),
+            Some(r) => println!("\t\tx: {} deg\n\t\ty: {} deg\n\t\tz: {} deg", r.x, r.y, r.z),
+            None => println!("\t\tNo rotation has been set!"),
         }
         println!("\tSun:");
         match &self.sun {
-            Some(s) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", s.x, s.y, s.z),
-            None => println!("No sun has been set!"),
+            Some(s) => println!("\t\tx: {} deg\n\t\ty: {} deg\n\t\tz: {} deg", s.x, s.y, s.z),
+            None => println!("\t\tNo sun has been set!"),
         }
 
         // Components
+        // Solar panels
         let number = match &self.solar_panels {
             Some(v) => v.iter().len(),
             None => 0,
@@ -269,6 +314,25 @@ impl CubeSat {
                     panel.power_generation
                 );
             }
+        }
+        // EPS
+        println!("\tEPS:");
+        match &self.eps {
+            Some(e) => println!(
+                "\t\tConsumption: {} W\n\t\tCharge: {} Wh\n\t\tMax. charge: {} Wh",
+                e.consumption, e.charge, e.max_charge
+            ),
+            None => println!("\t\tNo EPS has been set!"),
+        }
+        // Generic components
+        println!("\tComponents:");
+        match &self.components {
+            Some(components) => {
+                for c in components {
+                    c.print();
+                }
+            }
+            None => println!("\t\tNo components have been set!"),
         }
     }
 }
