@@ -550,6 +550,22 @@ mod tests {
     }
 
     #[test]
+    fn with_sun() {
+        let cubesat_x = CubeSat::new().with_sun(1.0, 0.0, 0.0);
+        let cubesat_y = CubeSat::new().with_sun(0.0, 1.0, 0.0);
+        let cubesat_z = CubeSat::new().with_sun(0.0, 0.0, 1.0);
+        assert_eq!(cubesat_x.sun.as_ref().unwrap().x, 1.0);
+        assert_eq!(cubesat_x.sun.as_ref().unwrap().y, 0.0);
+        assert_eq!(cubesat_x.sun.as_ref().unwrap().z, 0.0);
+        assert_eq!(cubesat_y.sun.as_ref().unwrap().x, 0.0);
+        assert_eq!(cubesat_y.sun.as_ref().unwrap().y, 1.0);
+        assert_eq!(cubesat_y.sun.as_ref().unwrap().z, 0.0);
+        assert_eq!(cubesat_z.sun.as_ref().unwrap().x, 0.0);
+        assert_eq!(cubesat_z.sun.as_ref().unwrap().y, 0.0);
+        assert_eq!(cubesat_z.sun.as_ref().unwrap().z, 1.0);
+    }
+
+    #[test]
     fn with_solar_panels() {
         let cubesat = CubeSat::new().with_solar_panels(
             vec![
@@ -587,19 +603,23 @@ mod tests {
     }
 
     #[test]
-    fn with_sun() {
-        let cubesat_x = CubeSat::new().with_sun(1.0, 0.0, 0.0);
-        let cubesat_y = CubeSat::new().with_sun(0.0, 1.0, 0.0);
-        let cubesat_z = CubeSat::new().with_sun(0.0, 0.0, 1.0);
-        assert_eq!(cubesat_x.sun.as_ref().unwrap().x, 1.0);
-        assert_eq!(cubesat_x.sun.as_ref().unwrap().y, 0.0);
-        assert_eq!(cubesat_x.sun.as_ref().unwrap().z, 0.0);
-        assert_eq!(cubesat_y.sun.as_ref().unwrap().x, 0.0);
-        assert_eq!(cubesat_y.sun.as_ref().unwrap().y, 1.0);
-        assert_eq!(cubesat_y.sun.as_ref().unwrap().z, 0.0);
-        assert_eq!(cubesat_z.sun.as_ref().unwrap().x, 0.0);
-        assert_eq!(cubesat_z.sun.as_ref().unwrap().y, 0.0);
-        assert_eq!(cubesat_z.sun.as_ref().unwrap().z, 1.0);
+    fn with_eps() {
+        let cubesat = CubeSat::new().with_eps(-1.0, 20.0);
+        assert_ne!(cubesat.eps, None);
+        assert_eq!(cubesat.eps.as_ref().unwrap().consumption, -1.0);
+        assert_eq!(cubesat.eps.as_ref().unwrap().charge, 20.0);
+        assert_eq!(cubesat.eps.as_ref().unwrap().max_charge, 20.0);
+    }
+
+    #[test]
+    fn with_component() {
+        let cubesat = CubeSat::new().with_component("ADCS", -1.0);
+        assert_ne!(cubesat.components, None);
+        assert_eq!(
+            cubesat.components.as_ref().unwrap()[0].name,
+            "ADCS".to_string()
+        );
+        assert_eq!(cubesat.components.as_ref().unwrap()[0].consumption, -1.0);
     }
 
     #[test]

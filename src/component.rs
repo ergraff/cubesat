@@ -27,7 +27,7 @@ impl SolarPanel {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Eps {
     pub consumption: f64, // [W]
     pub charge: f64,      // [Wh]
@@ -68,6 +68,7 @@ impl Eps {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Component {
     pub name: String,
     pub consumption: f64,
@@ -161,5 +162,30 @@ mod tests {
         assert_eq!(panel_neg_z.power_generation(&sun_neg_y), 0.0);
         assert_eq!(panel_neg_z.power_generation(&sun_pos_z), 1.0);
         assert_eq!(panel_neg_z.power_generation(&sun_neg_z), 0.0);
+    }
+
+    #[test]
+    fn eps() {
+        let mut eps = Eps::new(-1.0, 20.0);
+        assert_eq!(eps.consumption, -1.0);
+        assert_eq!(eps.charge, 20.0);
+        assert_eq!(eps.max_charge, 20.0);
+
+        let timestep = 1.0;
+        eps.update_capacity(1.0, timestep);
+        assert_eq!(eps.charge, eps.max_charge);
+
+        eps.update_capacity(-1.0, timestep);
+        assert_eq!(
+            eps.charge,
+            (-1.0 * timestep + (eps.max_charge * time::HOUR)) / time::HOUR
+        );
+    }
+
+    #[test]
+    fn component() {
+        let comp = Component::new("ADCS", -1.0);
+        assert_eq!(comp.name, "ADCS".to_string());
+        assert_eq!(comp.consumption, -1.0);
     }
 }
