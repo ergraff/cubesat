@@ -14,12 +14,8 @@ impl Vector3 {
         }
     }
 
-    pub fn new(vec: (f64, f64, f64)) -> Self {
-        Vector3 {
-            x: vec.0,
-            y: vec.1,
-            z: vec.2,
-        }
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Vector3 { x, y, z }
     }
 
     pub fn dot(&self, other: &Vector3) -> f64 {
@@ -122,9 +118,9 @@ mod tests {
 
     #[test]
     fn unit_vectors() {
-        let unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let unit_z = Vector3::new((0.0, 0.0, 1.0));
+        let unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let unit_z = Vector3::new(0.0, 0.0, 1.0);
         assert_eq!(unit_x.x, 1.0);
         assert_eq!(unit_y.y, 1.0);
         assert_eq!(unit_z.z, 1.0);
@@ -133,14 +129,14 @@ mod tests {
     #[test]
     fn negative() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let pos_all_one = Vector3::new((1.0, 1.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
-        let neg_all_one = Vector3::new((-1.0, -1.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let pos_all_one = Vector3::new(1.0, 1.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
+        let neg_all_one = Vector3::new(-1.0, -1.0, -1.0);
         assert_eq!(origin.negative(), origin);
         assert_eq!(pos_unit_x.negative(), neg_unit_x);
         assert_eq!(pos_unit_y.negative(), neg_unit_y);
@@ -151,14 +147,14 @@ mod tests {
     #[test]
     fn abs() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let pos_all_one = Vector3::new((1.0, 1.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
-        let neg_all_one = Vector3::new((-1.0, -1.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let pos_all_one = Vector3::new(1.0, 1.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
+        let neg_all_one = Vector3::new(-1.0, -1.0, -1.0);
 
         assert_eq!(origin.abs(), 0.0);
         assert_eq!(pos_unit_x.abs(), 1.0);
@@ -174,14 +170,14 @@ mod tests {
     #[test]
     fn dot() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let pos_all_one = Vector3::new((1.0, 1.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
-        let neg_all_one = Vector3::new((-1.0, -1.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let pos_all_one = Vector3::new(1.0, 1.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
+        let neg_all_one = Vector3::new(-1.0, -1.0, -1.0);
 
         assert_eq!(origin.dot(&origin), 0.0);
 
@@ -240,14 +236,14 @@ mod tests {
     #[test]
     fn angle_to() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let pos_all_one = Vector3::new((1.0, 1.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
-        let neg_all_one = Vector3::new((-1.0, -1.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let pos_all_one = Vector3::new(1.0, 1.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
+        let neg_all_one = Vector3::new(-1.0, -1.0, -1.0);
 
         assert!(origin.angle_to(&origin).is_nan());
         assert!(origin.angle_to(&pos_unit_x).is_nan());
@@ -283,12 +279,12 @@ mod tests {
     #[test]
     fn rot_x() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
 
         assert_eq!(origin.rot_x(std::f64::consts::FRAC_PI_2), origin);
         assert_eq!(origin.rot_x(std::f64::consts::PI), origin);
@@ -306,12 +302,12 @@ mod tests {
     #[test]
     fn rot_y() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
 
         assert_eq!(origin.rot_y(std::f64::consts::FRAC_PI_2), origin);
         assert_eq!(origin.rot_y(std::f64::consts::PI), origin);
@@ -329,12 +325,12 @@ mod tests {
     #[test]
     fn rot_z() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let neg_unit_x = Vector3::new((-1.0, 0.0, 0.0));
-        let neg_unit_y = Vector3::new((0.0, -1.0, 0.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let neg_unit_x = Vector3::new(-1.0, 0.0, 0.0);
+        let neg_unit_y = Vector3::new(0.0, -1.0, 0.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
 
         assert_eq!(origin.rot_z(std::f64::consts::FRAC_PI_2), origin);
         assert_eq!(origin.rot_z(std::f64::consts::PI), origin);
@@ -352,10 +348,10 @@ mod tests {
     #[test]
     fn rot_xyz() {
         let origin = Vector3::origin();
-        let pos_unit_x = Vector3::new((1.0, 0.0, 0.0));
-        let pos_unit_y = Vector3::new((0.0, 1.0, 0.0));
-        let pos_unit_z = Vector3::new((0.0, 0.0, 1.0));
-        let neg_unit_z = Vector3::new((0.0, 0.0, -1.0));
+        let pos_unit_x = Vector3::new(1.0, 0.0, 0.0);
+        let pos_unit_y = Vector3::new(0.0, 1.0, 0.0);
+        let pos_unit_z = Vector3::new(0.0, 0.0, 1.0);
+        let neg_unit_z = Vector3::new(0.0, 0.0, -1.0);
 
         assert_eq!(
             origin

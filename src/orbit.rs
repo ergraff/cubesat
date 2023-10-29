@@ -51,27 +51,27 @@ pub fn orbit_equatorial_cosine(cubesat: &mut cubesat::CubeSat) {
     // Calculate new vectors
     // x = r * cos(wt)
     // y = r * sin(wt)
-    *pos = vector::Vector3::new((
+    *pos = vector::Vector3::new(
         r * (omega * time.now).cos(),
         r * (omega * time.now).sin(),
         0.0,
-    ));
+    );
 
     // x' = -w * r * sin(wt)
     // y' = w * r * cos(wt)
-    *vel = vector::Vector3::new((
+    *vel = vector::Vector3::new(
         -omega * r * (omega * time.now).sin(),
         omega * r * (omega * time.now).cos(),
         0.0,
-    ));
+    );
 
     // x'' = -w^2 * r * cos(wt)
     // y'' = -w^2 * r * sin(wt)
-    *acc = vector::Vector3::new((
+    *acc = vector::Vector3::new(
         -omega * omega * r * (omega * time.now).cos(),
         -omega * omega * r * (omega * time.now).sin(),
         0.0,
-    ));
+    );
 }
 
 #[cfg(test)]
@@ -96,9 +96,9 @@ mod tests {
         let mut cubesat = cubesat::CubeSat::new()
             .with_orbit_type("equatorial cosine")
             .with_orbit_parameters(vec![("radius", 500_000.0)])
-            .with_position((0.0, 0.0, 0.0))
-            .with_velocity((0.0, 0.0, 0.0))
-            .with_acceleration((0.0, 0.0, 0.0))
+            .with_position(0.0, 0.0, 0.0)
+            .with_velocity(0.0, 0.0, 0.0)
+            .with_acceleration(0.0, 0.0, 0.0)
             .with_time(0.0, 1.0, 1.0);
 
         // cubesat.update_orbit();

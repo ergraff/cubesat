@@ -10,11 +10,11 @@ fn main() {
         .with_time(0.0, 100.0, 1.0)
         .with_orbit_type("equatorial cosine")
         .with_orbit_parameters(vec![("radius", 500_000.0)])
-        .with_position((0.0, 0.0, 0.0))
-        .with_velocity((0.0, 0.0, 0.0))
-        .with_acceleration((0.0, 0.0, 0.0))
-        .with_sun((1.0, 0.0, 0.0))
-        .with_rotation((0.0, 0.0, 0.0))
+        .with_position(0.0, 0.0, 0.0)
+        .with_velocity(0.0, 0.0, 0.0)
+        .with_acceleration(0.0, 0.0, 0.0)
+        .with_sun(1.0, 0.0, 0.0)
+        .with_rotation(0.0, 0.0, 0.0)
         .with_solar_panels(
             vec![
                 (1.0, 0.0, 0.0),

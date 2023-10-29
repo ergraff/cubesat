@@ -7,9 +7,9 @@ pub struct SolarPanel {
 }
 
 impl SolarPanel {
-    pub fn new(power_generation: f64, orientation: (f64, f64, f64)) -> Self {
+    pub fn new(power_generation: f64, x: f64, y: f64, z: f64) -> Self {
         SolarPanel {
-            orientation: vector::Vector3::new(orientation),
+            orientation: vector::Vector3::new(x, y, z),
             power_generation,
         }
     }
@@ -32,33 +32,30 @@ mod tests {
 
     #[test]
     fn panel_new() {
-        let panel_zero = SolarPanel::new(0.0, (0.0, 0.0, 0.0));
-        let panel_x = SolarPanel::new(0.0, (1.0, 0.0, 0.0));
-        let panel_y = SolarPanel::new(0.0, (0.0, 1.0, 0.0));
-        let panel_z = SolarPanel::new(0.0, (0.0, 0.0, 1.0));
-        assert_eq!(
-            panel_zero.orientation,
-            vector::Vector3::new((0.0, 0.0, 0.0))
-        );
-        assert_eq!(panel_x.orientation, vector::Vector3::new((1.0, 0.0, 0.0)));
-        assert_eq!(panel_y.orientation, vector::Vector3::new((0.0, 1.0, 0.0)));
-        assert_eq!(panel_z.orientation, vector::Vector3::new((0.0, 0.0, 1.0)));
+        let panel_zero = SolarPanel::new(0.0, 0.0, 0.0, 0.0);
+        let panel_x = SolarPanel::new(0.0, 1.0, 0.0, 0.0);
+        let panel_y = SolarPanel::new(0.0, 0.0, 1.0, 0.0);
+        let panel_z = SolarPanel::new(0.0, 0.0, 0.0, 1.0);
+        assert_eq!(panel_zero.orientation, vector::Vector3::new(0.0, 0.0, 0.0));
+        assert_eq!(panel_x.orientation, vector::Vector3::new(1.0, 0.0, 0.0));
+        assert_eq!(panel_y.orientation, vector::Vector3::new(0.0, 1.0, 0.0));
+        assert_eq!(panel_z.orientation, vector::Vector3::new(0.0, 0.0, 1.0));
     }
 
     #[test]
     fn power_generation() {
-        let panel_pos_x = SolarPanel::new(1.0, (1.0, 0.0, 0.0));
-        let panel_neg_x = SolarPanel::new(1.0, (-1.0, 0.0, 0.0));
-        let panel_pos_y = SolarPanel::new(1.0, (0.0, 1.0, 0.0));
-        let panel_neg_y = SolarPanel::new(1.0, (0.0, -1.0, 0.0));
-        let panel_pos_z = SolarPanel::new(1.0, (0.0, 0.0, 1.0));
-        let panel_neg_z = SolarPanel::new(1.0, (0.0, 0.0, -1.0));
-        let sun_pos_x = vector::Vector3::new((1.0, 0.0, 0.0));
-        let sun_neg_x = vector::Vector3::new((-1.0, 0.0, 0.0));
-        let sun_pos_y = vector::Vector3::new((0.0, 1.0, 0.0));
-        let sun_neg_y = vector::Vector3::new((0.0, -1.0, 0.0));
-        let sun_pos_z = vector::Vector3::new((0.0, 0.0, 1.0));
-        let sun_neg_z = vector::Vector3::new((0.0, 0.0, -1.0));
+        let panel_pos_x = SolarPanel::new(1.0, 1.0, 0.0, 0.0);
+        let panel_neg_x = SolarPanel::new(1.0, -1.0, 0.0, 0.0);
+        let panel_pos_y = SolarPanel::new(1.0, 0.0, 1.0, 0.0);
+        let panel_neg_y = SolarPanel::new(1.0, 0.0, -1.0, 0.0);
+        let panel_pos_z = SolarPanel::new(1.0, 0.0, 0.0, 1.0);
+        let panel_neg_z = SolarPanel::new(1.0, 0.0, 0.0, -1.0);
+        let sun_pos_x = vector::Vector3::new(1.0, 0.0, 0.0);
+        let sun_neg_x = vector::Vector3::new(-1.0, 0.0, 0.0);
+        let sun_pos_y = vector::Vector3::new(0.0, 1.0, 0.0);
+        let sun_neg_y = vector::Vector3::new(0.0, -1.0, 0.0);
+        let sun_pos_z = vector::Vector3::new(0.0, 0.0, 1.0);
+        let sun_neg_z = vector::Vector3::new(0.0, 0.0, -1.0);
 
         assert_eq!(panel_pos_x.power_generation(&sun_pos_x), 0.0);
         assert_eq!(panel_pos_x.power_generation(&sun_neg_x), 1.0);

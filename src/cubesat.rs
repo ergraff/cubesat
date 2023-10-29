@@ -67,23 +67,23 @@ impl CubeSat {
         self
     }
 
-    pub fn with_position(mut self, position: (f64, f64, f64)) -> Self {
-        self.pos = Some(vector::Vector3::new(position));
+    pub fn with_position(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.pos = Some(vector::Vector3::new(x, y, z));
         self
     }
 
-    pub fn with_velocity(mut self, velocity: (f64, f64, f64)) -> Self {
-        self.vel = Some(vector::Vector3::new(velocity));
+    pub fn with_velocity(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.vel = Some(vector::Vector3::new(x, y, z));
         self
     }
 
-    pub fn with_acceleration(mut self, acceleration: (f64, f64, f64)) -> Self {
-        self.acc = Some(vector::Vector3::new(acceleration));
+    pub fn with_acceleration(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.acc = Some(vector::Vector3::new(x, y, z));
         self
     }
 
-    pub fn with_rotation(mut self, rotation: (f64, f64, f64)) -> Self {
-        self.rot = Some(vector::Vector3::new(rotation));
+    pub fn with_rotation(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.rot = Some(vector::Vector3::new(x, y, z));
         self
     }
 
@@ -94,15 +94,20 @@ impl CubeSat {
     ) -> Self {
         let mut solar_panels = vec![];
         for orientation in orientations {
-            let panel = component::SolarPanel::new(power_generation, orientation);
+            let panel = component::SolarPanel::new(
+                power_generation,
+                orientation.0,
+                orientation.1,
+                orientation.2,
+            );
             solar_panels.push(panel);
         }
         self.solar_panels = Some(solar_panels);
         self
     }
 
-    pub fn with_sun(mut self, sun: (f64, f64, f64)) -> Self {
-        self.sun = Some(vector::Vector3::new(sun));
+    pub fn with_sun(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.sun = Some(vector::Vector3::new(x, y, z));
         self
     }
 
@@ -324,9 +329,9 @@ mod tests {
 
     #[test]
     fn with_position() {
-        let cubesat_x = CubeSat::new().with_position((1.0, 0.0, 0.0));
-        let cubesat_y = CubeSat::new().with_position((0.0, 1.0, 0.0));
-        let cubesat_z = CubeSat::new().with_position((0.0, 0.0, 1.0));
+        let cubesat_x = CubeSat::new().with_position(1.0, 0.0, 0.0);
+        let cubesat_y = CubeSat::new().with_position(0.0, 1.0, 0.0);
+        let cubesat_z = CubeSat::new().with_position(0.0, 0.0, 1.0);
         assert_ne!(cubesat_x.pos, None);
         assert_ne!(cubesat_y.pos, None);
         assert_ne!(cubesat_z.pos, None);
@@ -343,9 +348,9 @@ mod tests {
 
     #[test]
     fn with_velocity() {
-        let cubesat_x = CubeSat::new().with_velocity((1.0, 0.0, 0.0));
-        let cubesat_y = CubeSat::new().with_velocity((0.0, 1.0, 0.0));
-        let cubesat_z = CubeSat::new().with_velocity((0.0, 0.0, 1.0));
+        let cubesat_x = CubeSat::new().with_velocity(1.0, 0.0, 0.0);
+        let cubesat_y = CubeSat::new().with_velocity(0.0, 1.0, 0.0);
+        let cubesat_z = CubeSat::new().with_velocity(0.0, 0.0, 1.0);
         assert_ne!(cubesat_x.vel, None);
         assert_ne!(cubesat_y.vel, None);
         assert_ne!(cubesat_z.vel, None);
@@ -362,9 +367,9 @@ mod tests {
 
     #[test]
     fn with_acceleration() {
-        let cubesat_x = CubeSat::new().with_acceleration((1.0, 0.0, 0.0));
-        let cubesat_y = CubeSat::new().with_acceleration((0.0, 1.0, 0.0));
-        let cubesat_z = CubeSat::new().with_acceleration((0.0, 0.0, 1.0));
+        let cubesat_x = CubeSat::new().with_acceleration(1.0, 0.0, 0.0);
+        let cubesat_y = CubeSat::new().with_acceleration(0.0, 1.0, 0.0);
+        let cubesat_z = CubeSat::new().with_acceleration(0.0, 0.0, 1.0);
         assert_ne!(cubesat_x.acc, None);
         assert_ne!(cubesat_y.acc, None);
         assert_ne!(cubesat_z.acc, None);
@@ -381,9 +386,9 @@ mod tests {
 
     #[test]
     fn with_rotation() {
-        let cubesat_x = CubeSat::new().with_rotation((1.0, 0.0, 0.0));
-        let cubesat_y = CubeSat::new().with_rotation((0.0, 1.0, 0.0));
-        let cubesat_z = CubeSat::new().with_rotation((0.0, 0.0, 1.0));
+        let cubesat_x = CubeSat::new().with_rotation(1.0, 0.0, 0.0);
+        let cubesat_y = CubeSat::new().with_rotation(0.0, 1.0, 0.0);
+        let cubesat_z = CubeSat::new().with_rotation(0.0, 0.0, 1.0);
         assert_ne!(cubesat_x.rot, None);
         assert_ne!(cubesat_y.rot, None);
         assert_ne!(cubesat_z.rot, None);
@@ -437,9 +442,9 @@ mod tests {
 
     #[test]
     fn with_sun() {
-        let cubesat_x = CubeSat::new().with_sun((1.0, 0.0, 0.0));
-        let cubesat_y = CubeSat::new().with_sun((0.0, 1.0, 0.0));
-        let cubesat_z = CubeSat::new().with_sun((0.0, 0.0, 1.0));
+        let cubesat_x = CubeSat::new().with_sun(1.0, 0.0, 0.0);
+        let cubesat_y = CubeSat::new().with_sun(0.0, 1.0, 0.0);
+        let cubesat_z = CubeSat::new().with_sun(0.0, 0.0, 1.0);
         assert_eq!(cubesat_x.sun.as_ref().unwrap().x, 1.0);
         assert_eq!(cubesat_x.sun.as_ref().unwrap().y, 0.0);
         assert_eq!(cubesat_x.sun.as_ref().unwrap().z, 0.0);
@@ -456,20 +461,20 @@ mod tests {
         // In the sun
         let radius = orbit::RADIUS_EARTH + 500_000.0;
         let cubesat_x = CubeSat::new()
-            .with_sun((-1.0, 0.0, 0.0))
-            .with_position((radius, 0.0, 0.0));
+            .with_sun(-1.0, 0.0, 0.0)
+            .with_position(radius, 0.0, 0.0);
         let cubesat_y = CubeSat::new()
-            .with_sun((-1.0, 0.0, 0.0))
-            .with_position((0.0, radius, 0.0));
+            .with_sun(-1.0, 0.0, 0.0)
+            .with_position(0.0, radius, 0.0);
         let cubesat_my = CubeSat::new()
-            .with_sun((-1.0, 0.0, 0.0))
-            .with_position((0.0, -radius, 0.0));
+            .with_sun(-1.0, 0.0, 0.0)
+            .with_position(0.0, -radius, 0.0);
         let cubesat_z = CubeSat::new()
-            .with_sun((-1.0, 0.0, 0.0))
-            .with_position((0.0, 0.0, radius));
+            .with_sun(-1.0, 0.0, 0.0)
+            .with_position(0.0, 0.0, radius);
         let cubesat_mz = CubeSat::new()
-            .with_sun((-1.0, 0.0, 0.0))
-            .with_position((0.0, 0.0, -radius));
+            .with_sun(-1.0, 0.0, 0.0)
+            .with_position(0.0, 0.0, -radius);
         assert_eq!(cubesat_x.in_eclipse(), false);
         assert_eq!(cubesat_y.in_eclipse(), false);
         assert_eq!(cubesat_my.in_eclipse(), false);
@@ -478,28 +483,28 @@ mod tests {
 
         // In the eclipse
         let cubesat_center = CubeSat::new()
-            .with_sun((-1.0, 0.0, 0.0))
-            .with_position((-radius, 0.0, 0.0));
-        let cubesat_center_y = CubeSat::new().with_sun((-1.0, 0.0, 0.0)).with_position((
+            .with_sun(-1.0, 0.0, 0.0)
+            .with_position(-radius, 0.0, 0.0);
+        let cubesat_center_y = CubeSat::new().with_sun(-1.0, 0.0, 0.0).with_position(
             -radius,
             orbit::RADIUS_EARTH,
             0.0,
-        ));
-        let cubesat_center_my = CubeSat::new().with_sun((-1.0, 0.0, 0.0)).with_position((
+        );
+        let cubesat_center_my = CubeSat::new().with_sun(-1.0, 0.0, 0.0).with_position(
             -radius,
             -orbit::RADIUS_EARTH,
             0.0,
-        ));
-        let cubesat_center_z = CubeSat::new().with_sun((-1.0, 0.0, 0.0)).with_position((
+        );
+        let cubesat_center_z = CubeSat::new().with_sun(-1.0, 0.0, 0.0).with_position(
             -radius,
             0.0,
             orbit::RADIUS_EARTH,
-        ));
-        let cubesat_center_mz = CubeSat::new().with_sun((-1.0, 0.0, 0.0)).with_position((
+        );
+        let cubesat_center_mz = CubeSat::new().with_sun(-1.0, 0.0, 0.0).with_position(
             -radius,
             0.0,
             -orbit::RADIUS_EARTH,
-        ));
+        );
         assert_eq!(cubesat_center.in_eclipse(), true);
         assert_eq!(cubesat_center_y.in_eclipse(), true);
         assert_eq!(cubesat_center_my.in_eclipse(), true);
@@ -511,7 +516,7 @@ mod tests {
     fn get_power_generation() {
         // Sun changes position
         let cubesat = CubeSat::new()
-            .with_position((orbit::RADIUS_EARTH + 500_000.0, 0.0, 0.0))
+            .with_position(orbit::RADIUS_EARTH + 500_000.0, 0.0, 0.0)
             .with_solar_panels(
                 vec![
                     (1.0, 0.0, 0.0),
@@ -523,22 +528,22 @@ mod tests {
                 ],
                 1.0,
             );
-        let cubesat_x = cubesat.with_sun((1.0, 0.0, 0.0));
+        let cubesat_x = cubesat.with_sun(1.0, 0.0, 0.0);
         assert_eq!(cubesat_x.get_power_generation(), 0.0);
 
-        let cubesat_mx = cubesat_x.with_sun((-1.0, 0.0, 0.0));
+        let cubesat_mx = cubesat_x.with_sun(-1.0, 0.0, 0.0);
         assert_eq!(cubesat_mx.get_power_generation(), 1.0);
 
-        let cubesat_y = cubesat_mx.with_sun((0.0, 1.0, 0.0));
+        let cubesat_y = cubesat_mx.with_sun(0.0, 1.0, 0.0);
         assert_eq!(cubesat_y.get_power_generation(), 1.0);
 
-        let cubesat_my = cubesat_y.with_sun((0.0, -1.0, 0.0));
+        let cubesat_my = cubesat_y.with_sun(0.0, -1.0, 0.0);
         assert_eq!(cubesat_my.get_power_generation(), 1.0);
 
-        let cubesat_z = cubesat_my.with_sun((0.0, 0.0, 1.0));
+        let cubesat_z = cubesat_my.with_sun(0.0, 0.0, 1.0);
         assert_eq!(cubesat_z.get_power_generation(), 1.0);
 
-        let cubesat_mz = cubesat_z.with_sun((0.0, 0.0, -1.0));
+        let cubesat_mz = cubesat_z.with_sun(0.0, 0.0, -1.0);
         assert_eq!(cubesat_mz.get_power_generation(), 1.0);
     }
 
