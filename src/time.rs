@@ -2,7 +2,7 @@ pub static SECOND: f64 = 1.0;
 pub static MINUTE: f64 = 60.0 * SECOND;
 pub static HOUR: f64 = 60.0 * MINUTE;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Time {
     pub now: f64,
     pub step: f64,

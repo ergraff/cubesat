@@ -6,6 +6,7 @@ use crate::vector;
 pub struct CubeSat {
     pub name: Option<String>,
     pub active: bool,
+    pub history: History,
 
     // Orbit
     pub orbit_type: Option<orbit::OrbitType>,
@@ -30,6 +31,7 @@ impl CubeSat {
         CubeSat {
             name: None,
             active: true,
+            history: History::new(),
             orbit_type: None,
             orbit_parameters: None,
             time: None,
@@ -207,11 +209,21 @@ impl CubeSat {
         }
     }
 
+    pub fn save_history(&mut self) {
+        // Gather values
+        self.history.save(
+            self.time, self.pos, self.vel, self.acc, self.rot, self.sun, self.eps,
+        );
+    }
+
     pub fn simulate(&mut self) {
         // Loop until end
         while self.active {
             // Update orbit
             self.update_orbit();
+
+            // Save history
+            self.save_history();
 
             // DEBUG Print
             self.print();
@@ -333,6 +345,76 @@ impl CubeSat {
                 }
             }
             None => println!("\t\tNo components have been set!"),
+        }
+    }
+}
+
+pub struct History {
+    time: Vec<f64>,
+    pos: Vec<(f64, f64, f64)>,
+    vel: Vec<(f64, f64, f64)>,
+    acc: Vec<(f64, f64, f64)>,
+    rot: Vec<(f64, f64, f64)>,
+    sun: Vec<(f64, f64, f64)>,
+    charge: Vec<f64>,
+}
+
+impl History {
+    pub fn new() -> Self {
+        History {
+            time: Vec::new(),
+            pos: Vec::new(),
+            vel: Vec::new(),
+            acc: Vec::new(),
+            rot: Vec::new(),
+            sun: Vec::new(),
+            charge: Vec::new(),
+        }
+    }
+
+    pub fn save(
+        &mut self,
+        time: Option<time::Time>,
+        pos: Option<vector::Vector3>,
+        vel: Option<vector::Vector3>,
+        acc: Option<vector::Vector3>,
+        rot: Option<vector::Vector3>,
+        sun: Option<vector::Vector3>,
+        eps: Option<component::Eps>,
+    ) {
+        // Time
+        if let Some(t) = time {
+            self.time.push(t.now);
+        }
+
+        // Position
+        if let Some(p) = pos {
+            self.pos.push((p.x, p.y, p.z));
+        }
+
+        // Velocity
+        if let Some(v) = vel {
+            self.vel.push((v.x, v.y, v.z));
+        }
+
+        // Acceleration
+        if let Some(a) = acc {
+            self.acc.push((a.x, a.y, a.z));
+        }
+
+        // Rotation
+        if let Some(r) = rot {
+            self.rot.push((r.x, r.y, r.z));
+        }
+
+        // Sun
+        if let Some(s) = sun {
+            self.sun.push((s.x, s.y, s.z));
+        }
+
+        // Charge
+        if let Some(e) = eps {
+            self.charge.push(e.charge);
         }
     }
 }

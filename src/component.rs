@@ -27,6 +27,7 @@ impl SolarPanel {
     }
 }
 
+#[derive(Copy, Clone)]
 pub struct Eps {
     pub consumption: f64, // [W]
     pub charge: f64,      // [Wh]
