@@ -35,9 +35,12 @@ pub fn orbit_equatorial_cosine(cubesat: &mut cubesat::CubeSat) {
         .radius
         .as_ref()
         .expect("No radius is set!");
-    let pos = &mut cubesat.pos.expect("No position vector is set!");
-    let vel = &mut cubesat.vel.expect("No velocity vector is set");
-    let acc = &mut cubesat.acc.expect("No acceleration vector is set!");
+    let pos = cubesat.pos.as_mut().expect("No position vector is set!");
+    let vel = cubesat.vel.as_mut().expect("No velocity vector is set!");
+    let acc = cubesat
+        .acc
+        .as_mut()
+        .expect("No acceleration vector is set!");
     let time = cubesat.time.as_ref().expect("No time is set!");
     let omega = (r.powi(3) / (CONST_G * MASS_EARTH)).powf(-0.5);
 
@@ -86,5 +89,34 @@ mod tests {
         let mut five_hundred = OrbitParameters::new();
         five_hundred.set_radius(500_000.0);
         assert_eq!(five_hundred.radius, Option::Some(RADIUS_EARTH + 500_000.0))
+    }
+
+    #[test]
+    fn orbit_equatorial_cosine() {
+        let mut cubesat = cubesat::CubeSat::new()
+            .with_orbit_type("equatorial cosine")
+            .with_orbit_parameters(vec![("radius", 500_000.0)])
+            .with_position((0.0, 0.0, 0.0))
+            .with_velocity((0.0, 0.0, 0.0))
+            .with_acceleration((0.0, 0.0, 0.0))
+            .with_time(0.0, 1.0, 1.0);
+
+        // cubesat.update_orbit();
+        super::orbit_equatorial_cosine(&mut cubesat);
+        let pos = cubesat.pos.unwrap();
+        let vel = cubesat.vel.unwrap();
+        let acc = cubesat.acc.unwrap();
+
+        assert_eq!(pos.x, RADIUS_EARTH + 500_000.0);
+        assert_eq!(pos.y, 0.0);
+        assert_eq!(pos.z, 0.0);
+
+        assert!(vel.x == 0.0);
+        assert!(vel.y > 0.0);
+        assert!(vel.z == 0.0);
+
+        assert!(acc.x < 0.0);
+        assert!(acc.y == 0.0);
+        assert!(acc.z == 0.0);
     }
 }
