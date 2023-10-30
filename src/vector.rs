@@ -41,10 +41,10 @@ impl Vector3 {
         angle
     }
 
-    pub fn rot_x(self, angle: f64) -> Self {
+    pub fn rot_x(self, radians: f64) -> Self {
         let mut x = self.x;
-        let mut y = angle.cos() * self.y - angle.sin() * self.z;
-        let mut z = angle.sin() * self.y + angle.cos() * self.z;
+        let mut y = radians.cos() * self.y - radians.sin() * self.z;
+        let mut z = radians.sin() * self.y + radians.cos() * self.z;
         // Round very-near-zero to zero
         let epsilon = std::f64::EPSILON;
         if x.abs() < epsilon {
@@ -59,10 +59,10 @@ impl Vector3 {
         Vector3 { x, y, z }
     }
 
-    pub fn rot_y(self, angle: f64) -> Self {
-        let mut x = angle.cos() * self.x + angle.sin() * self.z;
+    pub fn rot_y(self, radians: f64) -> Self {
+        let mut x = radians.cos() * self.x + radians.sin() * self.z;
         let mut y = self.y;
-        let mut z = -angle.sin() * self.x + angle.cos() * self.z;
+        let mut z = -radians.sin() * self.x + radians.cos() * self.z;
         // Round very-near-zero to zero
         let epsilon = std::f64::EPSILON;
         if x.abs() < epsilon {
@@ -77,9 +77,9 @@ impl Vector3 {
         Vector3 { x, y, z }
     }
 
-    pub fn rot_z(self, angle: f64) -> Self {
-        let mut x = angle.cos() * self.x - angle.sin() * self.y;
-        let mut y = angle.sin() * self.x + angle.cos() * self.y;
+    pub fn rot_z(self, radians: f64) -> Self {
+        let mut x = radians.cos() * self.x - radians.sin() * self.y;
+        let mut y = radians.sin() * self.x + radians.cos() * self.y;
         let mut z = self.z;
         // Round very-near-zero to zero
         let epsilon = std::f64::EPSILON;
