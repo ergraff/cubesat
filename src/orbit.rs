@@ -8,21 +8,36 @@ pub static RADIUS_EARTH: f64 = 6.3781e6; // [m]
 #[derive(Debug, PartialEq)]
 pub enum OrbitType {
     EquatorialCosine,
+    CircularCosine,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct OrbitParameters {
     // Equatorial and circular
-    pub radius: Option<f64>, // [m]
+    pub radius: Option<f64>,                // [m]
+    pub inclination: Option<f64>,           // [deg]
+    pub argument_of_periapsis: Option<f64>, // [deg]
 }
 
 impl OrbitParameters {
     pub fn new() -> Self {
-        OrbitParameters { radius: None }
+        OrbitParameters {
+            radius: None,
+            inclination: None,
+            argument_of_periapsis: None,
+        }
     }
 
     pub fn set_radius(&mut self, radius: f64) {
         self.radius = Some(RADIUS_EARTH + radius);
+    }
+
+    pub fn set_inclination(&mut self, inclination: f64) {
+        self.inclination = Some(inclination);
+    }
+
+    pub fn set_argument_of_periapsis(&mut self, argument_of_periapsis: f64) {
+        self.argument_of_periapsis = Some(argument_of_periapsis);
     }
 }
 
@@ -72,6 +87,67 @@ pub fn orbit_equatorial_cosine(cubesat: &mut cubesat::CubeSat) {
         -omega * omega * r * (omega * time.now).sin(),
         0.0,
     );
+}
+
+pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
+    // Guards and values
+    let parameters = cubesat
+        .orbit_parameters
+        .as_ref()
+        .expect("No orbit parameters are set!");
+    let r = parameters.radius.as_ref().expect("No radius is set!");
+    let inc = parameters
+        .inclination
+        .as_ref()
+        .expect("No inclination is set!");
+    let ap = parameters
+        .argument_of_periapsis
+        .as_ref()
+        .expect("No argument of periapsis is set!");
+    let pos = cubesat.pos.as_mut().expect("No position vector is set!");
+    let vel = cubesat.vel.as_mut().expect("No velocity vector is set!");
+    let acc = cubesat
+        .acc
+        .as_mut()
+        .expect("No acceleration vector is set!");
+    let time = cubesat.time.as_ref().expect("No time is set!");
+    let omega = (r.powi(3) / (CONST_G * MASS_EARTH)).powf(-0.5);
+    let ang_to_rad = std::f64::consts::PI / 180.0;
+
+    // Semi-major axis = radius
+    // pos_x(t) = r * cos([r^3/GM]^-(1/2)*t)
+    // pos_y(t) = r * sin([r^3/GM]^-(1/2)*t)
+
+    // Calculate new vectors
+    // x = r * cos(wt)
+    // y = r * sin(wt)
+    *pos = vector::Vector3::new(
+        r * (omega * time.now).cos(),
+        r * (omega * time.now).sin(),
+        0.0,
+    )
+    .rot_x(*inc * ang_to_rad)
+    .rot_z(*ap * ang_to_rad);
+
+    // x' = -w * r * sin(wt)
+    // y' =  w * r * cos(wt)
+    *vel = vector::Vector3::new(
+        -omega * r * (omega * time.now).sin(),
+        omega * r * (omega * time.now).cos(),
+        0.0,
+    )
+    .rot_x(*inc * ang_to_rad)
+    .rot_z(*ap * ang_to_rad);
+
+    // x'' = -w^2 * r * cos(wt)
+    // y'' = -w^2 * r * sin(wt)
+    *acc = vector::Vector3::new(
+        -omega * omega * r * (omega * time.now).cos(),
+        -omega * omega * r * (omega * time.now).sin(),
+        0.0,
+    )
+    .rot_x(*inc * ang_to_rad)
+    .rot_z(*ap * ang_to_rad);
 }
 
 #[cfg(test)]

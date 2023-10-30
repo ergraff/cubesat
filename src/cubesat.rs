@@ -59,6 +59,7 @@ impl CubeSat {
     pub fn with_orbit_type(mut self, orbit_type: &str) -> Self {
         match orbit_type {
             "equatorial cosine" => self.orbit_type = Some(orbit::OrbitType::EquatorialCosine),
+            "circular cosine" => self.orbit_type = Some(orbit::OrbitType::CircularCosine),
             t => {
                 self.orbit_type = None;
                 println!("{} is not a valid orbit type!", t);
@@ -72,6 +73,8 @@ impl CubeSat {
         for p in orbit_parameters {
             match p {
                 ("radius", r) => parameters.set_radius(r),
+                ("inclination", i) => parameters.set_inclination(i),
+                ("argument of periapsis", ap) => parameters.set_argument_of_periapsis(ap),
                 _ => {}
             }
         }
@@ -193,6 +196,7 @@ impl CubeSat {
         if let Some(orbit_type) = &self.orbit_type {
             match orbit_type {
                 orbit::OrbitType::EquatorialCosine => orbit::orbit_equatorial_cosine(self),
+                orbit::OrbitType::CircularCosine => orbit::orbit_circular_cosine(self),
             }
         } else {
             panic!("No orbit type is set!");
@@ -258,6 +262,7 @@ impl CubeSat {
         println!("\tOrbit:");
         match &self.orbit_type {
             Some(orbit::OrbitType::EquatorialCosine) => println!("\t\tType: Equatorial cosine"),
+            Some(orbit::OrbitType::CircularCosine) => println!("\t\tType: Circular cosine"),
             None => println!("\t\tNo orbit type is set!"),
         }
         match &self.orbit_parameters {
