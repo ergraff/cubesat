@@ -7,9 +7,13 @@ mod vector;
 fn main() {
     let mut cubesat = cubesat::CubeSat::new()
         .with_name("APTAS")
-        .with_time(0.0, 100.0, 1.0)
-        .with_orbit_type("equatorial cosine")
-        .with_orbit_parameters(vec![("radius", 500_000.0)])
+        .with_time(0.0, 86400.0, 1.0)
+        .with_orbit_type("circular cosine")
+        .with_orbit_parameters(vec![
+            ("radius", 500_000.0),
+            ("inclination", 45.0),
+            ("argument of periapsis", 45.0),
+        ])
         .with_position(0.0, 0.0, 0.0)
         .with_velocity(0.0, 0.0, 0.0)
         .with_acceleration(0.0, 0.0, 0.0)
@@ -32,4 +36,5 @@ fn main() {
     cubesat.print();
     cubesat.simulate();
     println!("Simulation ended");
+    cubesat.history.write("history.csv");
 }

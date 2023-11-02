@@ -2,6 +2,8 @@ use crate::component;
 use crate::orbit;
 use crate::time;
 use crate::vector;
+use std::fs::File;
+use std::io::Write;
 
 pub struct CubeSat {
     pub name: Option<String>,
@@ -421,6 +423,47 @@ impl History {
         if let Some(e) = eps {
             self.charge.push(e.charge);
         }
+    }
+
+    pub fn write(&self, file_name: &str) {
+        // Open file
+        let file = File::create(file_name);
+        if let Err(e) = file {
+            println!("File could not be opened due to \"{}\"!", e);
+            return;
+        }
+
+        // Write header
+        let header = format!("time|position|velocity|acceleration|rotation|sun|charge\n");
+        let result = file.as_ref().unwrap().write_all(&header.into_bytes());
+        if let Err(e) = result {
+            println!("File could not be saved due to \"{}\"!", e);
+            return;
+        }
+
+        // Write content
+        for i in 0..self.time.len() {
+            // Collect values
+            let time = self.time[i];
+            let pos = format!("{},{},{}", self.pos[i].0, self.pos[i].1, self.pos[i].2);
+            let vel = format!("{},{},{}", self.vel[i].0, self.vel[i].1, self.vel[i].2);
+            let acc = format!("{},{},{}", self.acc[i].0, self.acc[i].1, self.acc[i].2);
+            let rot = format!("{},{},{}", self.rot[i].0, self.rot[i].1, self.rot[i].2);
+            let sun = format!("{},{},{}", self.sun[i].0, self.sun[i].1, self.sun[i].2);
+            let charge = self.charge[i];
+            // Format line and write
+            let line = format!(
+                "{}|{}|{}|{}|{}|{}|{}\n",
+                time, pos, vel, acc, rot, sun, charge
+            );
+            let result = file.as_ref().unwrap().write_all(&line.into_bytes());
+            if let Err(e) = result {
+                println!("File could not be saved due to \"{}\"!", e);
+                return;
+            }
+        }
+
+        println!("File '{}' was written successfully!", file_name);
     }
 }
 
