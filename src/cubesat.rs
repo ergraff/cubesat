@@ -770,4 +770,51 @@ mod tests {
         }
         assert_eq!(cubesat.active, false);
     }
+
+    #[test]
+    fn history_new() {
+        let history = History::new();
+        assert!(history.time.is_empty());
+        assert!(history.pos.is_empty());
+        assert!(history.vel.is_empty());
+        assert!(history.acc.is_empty());
+        assert!(history.rot.is_empty());
+        assert!(history.sun.is_empty());
+        assert!(history.charge.is_empty());
+    }
+
+    #[test]
+    fn history_save() {
+        let mut cubesat = CubeSat::new()
+            .with_time(0.0, 1.0, 1.0)
+            .with_position(1.0, 1.0, 1.0)
+            .with_velocity(1.0, 1.0, 1.0)
+            .with_acceleration(1.0, 1.0, 1.0)
+            .with_rotation(1.0, 1.0, 1.0)
+            .with_sun(1.0, 1.0, 1.0)
+            .with_eps(-1.0, 1.0);
+        cubesat.save_history();
+        cubesat.iterate();
+        cubesat.save_history();
+
+        let history = cubesat.history;
+
+        // First step
+        assert_eq!(history.time[0], 0.0);
+        assert_eq!(history.pos[0], (1.0, 1.0, 1.0));
+        assert_eq!(history.vel[0], (1.0, 1.0, 1.0));
+        assert_eq!(history.acc[0], (1.0, 1.0, 1.0));
+        assert_eq!(history.rot[0], (1.0, 1.0, 1.0));
+        assert_eq!(history.sun[0], (1.0, 1.0, 1.0));
+        assert_eq!(history.charge[0], 1.0);
+
+        // Second step
+        assert_eq!(history.time[1], 1.0);
+        assert_eq!(history.pos[1], (1.0, 1.0, 1.0));
+        assert_eq!(history.vel[1], (1.0, 1.0, 1.0));
+        assert_eq!(history.acc[1], (1.0, 1.0, 1.0));
+        assert_eq!(history.rot[1], (1.0, 1.0, 1.0));
+        assert_eq!(history.sun[1], (1.0, 1.0, 1.0));
+        assert_eq!(history.charge[1], 1.0);
+    }
 }
