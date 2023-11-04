@@ -15,9 +15,16 @@ impl SolarPanel {
         }
     }
 
-    pub fn power_generation(&self, sun: &vector::Vector3) -> f64 {
+    pub fn power_generation(&self, rotation: &vector::Vector3, sun: &vector::Vector3) -> f64 {
         // Angle
-        let angle = self.orientation.negative().angle_to(sun);
+        let ang_to_rad = std::f64::consts::PI / 180.0;
+        let angle = self
+            .orientation
+            .rot_x(rotation.x * ang_to_rad)
+            .rot_y(rotation.y * ang_to_rad)
+            .rot_z(rotation.z * ang_to_rad)
+            .negative()
+            .angle_to(sun);
 
         // match angle, with cosine
         match angle >= std::f64::consts::FRAC_PI_2 {

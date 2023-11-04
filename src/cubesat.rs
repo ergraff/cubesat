@@ -187,6 +187,7 @@ impl CubeSat {
             .as_ref()
             .expect("No solar panels are set!");
         let sun = &self.sun.expect("No sun is set!");
+        let rotation = &self.rot.expect("No rotation is set!");
 
         // In eclipse, no power generation
         if self.in_eclipse() {
@@ -194,7 +195,10 @@ impl CubeSat {
         }
 
         // In sun
-        panels.iter().map(|p| p.power_generation(sun)).sum()
+        panels
+            .iter()
+            .map(|p| p.power_generation(rotation, sun))
+            .sum()
     }
 
     pub fn get_power_consumption(&self) -> f64 {
