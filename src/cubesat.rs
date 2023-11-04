@@ -312,7 +312,7 @@ impl CubeSat {
         }
         println!("\tSun:");
         match &self.sun {
-            Some(s) => println!("\t\tx: {} deg\n\t\ty: {} deg\n\t\tz: {} deg", s.x, s.y, s.z),
+            Some(s) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", s.x, s.y, s.z),
             None => println!("\t\tNo sun has been set!"),
         }
 
