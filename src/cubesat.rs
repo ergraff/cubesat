@@ -20,6 +20,8 @@ pub struct CubeSat {
     pub vel: Option<vector::Vector3>,
     pub acc: Option<vector::Vector3>,
     pub rot: Option<vector::Vector3>,
+    pub rot_vel: Option<vector::Vector3>,
+    pub rot_acc: Option<vector::Vector3>,
     pub sun: Option<vector::Vector3>,
 
     // Components
@@ -41,6 +43,8 @@ impl CubeSat {
             vel: None,
             acc: None,
             rot: None,
+            rot_vel: None,
+            rot_acc: None,
             sun: None,
             solar_panels: None,
             eps: None,
@@ -101,6 +105,16 @@ impl CubeSat {
 
     pub fn with_rotation(mut self, x: f64, y: f64, z: f64) -> Self {
         self.rot = Some(vector::Vector3::new(x, y, z));
+        self
+    }
+
+    pub fn with_rotation_velocity(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.rot_vel = Some(vector::Vector3::new(x, y, z));
+        self
+    }
+
+    pub fn with_rotation_acceleration(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.rot_acc = Some(vector::Vector3::new(x, y, z));
         self
     }
 
@@ -205,6 +219,32 @@ impl CubeSat {
         }
     }
 
+    pub fn update_rotation(&mut self) {
+        // Update the rotational vectors using the Euler method
+
+        // Guards
+        let step = self.time.as_ref().expect("No time is set!").step;
+        let acc = self
+            .rot_acc
+            .as_ref()
+            .expect("No rotational acceleration is set!");
+        let vel = self
+            .rot_vel
+            .as_mut()
+            .expect("No rotational velocity is set!");
+        let rot = self.rot.as_mut().expect("No rotation is set!");
+
+        // Velocity
+        vel.x += acc.x * step;
+        vel.y += acc.y * step;
+        vel.z += acc.z * step;
+
+        // Rotation
+        rot.x += vel.x * step;
+        rot.y += vel.y * step;
+        rot.z += vel.z * step;
+    }
+
     pub fn iterate(&mut self) {
         match self.time {
             Some(ref mut t) => {
@@ -218,7 +258,15 @@ impl CubeSat {
     pub fn save_history(&mut self) {
         // Gather values
         self.history.save(
-            self.time, self.pos, self.vel, self.acc, self.rot, self.sun, self.eps,
+            self.time,
+            self.pos,
+            self.vel,
+            self.acc,
+            self.rot,
+            self.rot_vel,
+            self.rot_acc,
+            self.sun,
+            self.eps,
         );
     }
 
@@ -227,6 +275,9 @@ impl CubeSat {
         while self.active {
             // Update orbit
             self.update_orbit();
+
+            // Update rotation
+            self.update_rotation();
 
             // Save history
             self.save_history();
@@ -310,6 +361,22 @@ impl CubeSat {
             Some(r) => println!("\t\tx: {} deg\n\t\ty: {} deg\n\t\tz: {} deg", r.x, r.y, r.z),
             None => println!("\t\tNo rotation has been set!"),
         }
+        println!("\tRotation. vel.:");
+        match &self.rot_vel {
+            Some(rv) => println!(
+                "\t\tx: {} deg/s\n\t\ty: {} deg/s\n\t\tz: {} deg/s",
+                rv.x, rv.y, rv.z
+            ),
+            None => println!("\t\tNo rotational velocity has been set!"),
+        }
+        println!("\tRotation. acc.:");
+        match &self.rot_acc {
+            Some(ra) => println!(
+                "\t\tx: {} deg/s²\n\t\ty: {} deg/s²\n\t\tz: {} deg/s²",
+                ra.x, ra.y, ra.z
+            ),
+            None => println!("\t\tNo rotational acceleration has been set!"),
+        }
         println!("\tSun:");
         match &self.sun {
             Some(s) => println!("\t\tx: {}\n\t\ty: {}\n\t\tz: {}", s.x, s.y, s.z),
@@ -362,6 +429,8 @@ pub struct History {
     vel: Vec<(f64, f64, f64)>,
     acc: Vec<(f64, f64, f64)>,
     rot: Vec<(f64, f64, f64)>,
+    rot_vel: Vec<(f64, f64, f64)>,
+    rot_acc: Vec<(f64, f64, f64)>,
     sun: Vec<(f64, f64, f64)>,
     charge: Vec<f64>,
 }
@@ -374,6 +443,8 @@ impl History {
             vel: Vec::new(),
             acc: Vec::new(),
             rot: Vec::new(),
+            rot_vel: Vec::new(),
+            rot_acc: Vec::new(),
             sun: Vec::new(),
             charge: Vec::new(),
         }
@@ -386,6 +457,8 @@ impl History {
         vel: Option<vector::Vector3>,
         acc: Option<vector::Vector3>,
         rot: Option<vector::Vector3>,
+        rot_vel: Option<vector::Vector3>,
+        rot_acc: Option<vector::Vector3>,
         sun: Option<vector::Vector3>,
         eps: Option<component::Eps>,
     ) {
@@ -414,6 +487,16 @@ impl History {
             self.rot.push((r.x, r.y, r.z));
         }
 
+        // Rotational velocity
+        if let Some(rv) = rot_vel {
+            self.rot_vel.push((rv.x, rv.y, rv.z));
+        }
+
+        // Rotational acceleration
+        if let Some(ra) = rot_acc {
+            self.rot_acc.push((ra.x, ra.y, ra.z));
+        }
+
         // Sun
         if let Some(s) = sun {
             self.sun.push((s.x, s.y, s.z));
@@ -434,7 +517,7 @@ impl History {
         }
 
         // Write header
-        let header = format!("time|position|velocity|acceleration|rotation|sun|charge\n");
+        let header = format!("time|position|velocity|acceleration|rotation|rotational velocity|rotational acceleration|sun|charge\n");
         let result = file.as_ref().unwrap().write_all(&header.into_bytes());
         if let Err(e) = result {
             println!("File could not be saved due to \"{}\"!", e);
@@ -449,12 +532,20 @@ impl History {
             let vel = format!("{},{},{}", self.vel[i].0, self.vel[i].1, self.vel[i].2);
             let acc = format!("{},{},{}", self.acc[i].0, self.acc[i].1, self.acc[i].2);
             let rot = format!("{},{},{}", self.rot[i].0, self.rot[i].1, self.rot[i].2);
+            let rot_vel = format!(
+                "{},{},{}",
+                self.rot_vel[i].0, self.rot_vel[i].1, self.rot_vel[i].2
+            );
+            let rot_acc = format!(
+                "{},{},{}",
+                self.rot_acc[i].0, self.rot_acc[i].1, self.rot_acc[i].2
+            );
             let sun = format!("{},{},{}", self.sun[i].0, self.sun[i].1, self.sun[i].2);
             let charge = self.charge[i];
             // Format line and write
             let line = format!(
-                "{}|{}|{}|{}|{}|{}|{}\n",
-                time, pos, vel, acc, rot, sun, charge
+                "{}|{}|{}|{}|{}|{}|{}|{}|{}\n",
+                time, pos, vel, acc, rot, rot_vel, rot_acc, sun, charge
             );
             let result = file.as_ref().unwrap().write_all(&line.into_bytes());
             if let Err(e) = result {
