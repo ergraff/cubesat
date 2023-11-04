@@ -826,6 +826,7 @@ mod tests {
         // Sun changes position
         let cubesat = CubeSat::new()
             .with_position(orbit::RADIUS_EARTH + 500_000.0, 0.0, 0.0)
+            .with_rotation(0.0, 0.0, 0.0)
             .with_solar_panels(
                 vec![
                     (1.0, 0.0, 0.0),

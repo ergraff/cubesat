@@ -127,48 +127,49 @@ mod tests {
         let sun_neg_y = vector::Vector3::new(0.0, -1.0, 0.0);
         let sun_pos_z = vector::Vector3::new(0.0, 0.0, 1.0);
         let sun_neg_z = vector::Vector3::new(0.0, 0.0, -1.0);
+        let rotation = vector::Vector3::new(0.0, 0.0, 0.0);
 
-        assert_eq!(panel_pos_x.power_generation(&sun_pos_x), 0.0);
-        assert_eq!(panel_pos_x.power_generation(&sun_neg_x), 1.0);
-        assert_eq!(panel_pos_x.power_generation(&sun_pos_y), 0.0);
-        assert_eq!(panel_pos_x.power_generation(&sun_neg_y), 0.0);
-        assert_eq!(panel_pos_x.power_generation(&sun_pos_z), 0.0);
-        assert_eq!(panel_pos_x.power_generation(&sun_neg_z), 0.0);
+        assert_eq!(panel_pos_x.power_generation(&rotation, &sun_pos_x), 0.0);
+        assert_eq!(panel_pos_x.power_generation(&rotation, &sun_neg_x), 1.0);
+        assert_eq!(panel_pos_x.power_generation(&rotation, &sun_pos_y), 0.0);
+        assert_eq!(panel_pos_x.power_generation(&rotation, &sun_neg_y), 0.0);
+        assert_eq!(panel_pos_x.power_generation(&rotation, &sun_pos_z), 0.0);
+        assert_eq!(panel_pos_x.power_generation(&rotation, &sun_neg_z), 0.0);
 
-        assert_eq!(panel_neg_x.power_generation(&sun_pos_x), 1.0);
-        assert_eq!(panel_neg_x.power_generation(&sun_neg_x), 0.0);
-        assert_eq!(panel_neg_x.power_generation(&sun_pos_y), 0.0);
-        assert_eq!(panel_neg_x.power_generation(&sun_neg_y), 0.0);
-        assert_eq!(panel_neg_x.power_generation(&sun_pos_z), 0.0);
-        assert_eq!(panel_neg_x.power_generation(&sun_neg_z), 0.0);
+        assert_eq!(panel_neg_x.power_generation(&rotation, &sun_pos_x), 1.0);
+        assert_eq!(panel_neg_x.power_generation(&rotation, &sun_neg_x), 0.0);
+        assert_eq!(panel_neg_x.power_generation(&rotation, &sun_pos_y), 0.0);
+        assert_eq!(panel_neg_x.power_generation(&rotation, &sun_neg_y), 0.0);
+        assert_eq!(panel_neg_x.power_generation(&rotation, &sun_pos_z), 0.0);
+        assert_eq!(panel_neg_x.power_generation(&rotation, &sun_neg_z), 0.0);
 
-        assert_eq!(panel_pos_y.power_generation(&sun_pos_x), 0.0);
-        assert_eq!(panel_pos_y.power_generation(&sun_neg_x), 0.0);
-        assert_eq!(panel_pos_y.power_generation(&sun_pos_y), 0.0);
-        assert_eq!(panel_pos_y.power_generation(&sun_neg_y), 1.0);
-        assert_eq!(panel_pos_y.power_generation(&sun_pos_z), 0.0);
-        assert_eq!(panel_pos_y.power_generation(&sun_neg_z), 0.0);
+        assert_eq!(panel_pos_y.power_generation(&rotation, &sun_pos_x), 0.0);
+        assert_eq!(panel_pos_y.power_generation(&rotation, &sun_neg_x), 0.0);
+        assert_eq!(panel_pos_y.power_generation(&rotation, &sun_pos_y), 0.0);
+        assert_eq!(panel_pos_y.power_generation(&rotation, &sun_neg_y), 1.0);
+        assert_eq!(panel_pos_y.power_generation(&rotation, &sun_pos_z), 0.0);
+        assert_eq!(panel_pos_y.power_generation(&rotation, &sun_neg_z), 0.0);
 
-        assert_eq!(panel_neg_y.power_generation(&sun_pos_x), 0.0);
-        assert_eq!(panel_neg_y.power_generation(&sun_neg_x), 0.0);
-        assert_eq!(panel_neg_y.power_generation(&sun_pos_y), 1.0);
-        assert_eq!(panel_neg_y.power_generation(&sun_neg_y), 0.0);
-        assert_eq!(panel_neg_y.power_generation(&sun_pos_z), 0.0);
-        assert_eq!(panel_neg_y.power_generation(&sun_neg_z), 0.0);
+        assert_eq!(panel_neg_y.power_generation(&rotation, &sun_pos_x), 0.0);
+        assert_eq!(panel_neg_y.power_generation(&rotation, &sun_neg_x), 0.0);
+        assert_eq!(panel_neg_y.power_generation(&rotation, &sun_pos_y), 1.0);
+        assert_eq!(panel_neg_y.power_generation(&rotation, &sun_neg_y), 0.0);
+        assert_eq!(panel_neg_y.power_generation(&rotation, &sun_pos_z), 0.0);
+        assert_eq!(panel_neg_y.power_generation(&rotation, &sun_neg_z), 0.0);
 
-        assert_eq!(panel_pos_z.power_generation(&sun_pos_x), 0.0);
-        assert_eq!(panel_pos_z.power_generation(&sun_neg_x), 0.0);
-        assert_eq!(panel_pos_z.power_generation(&sun_pos_y), 0.0);
-        assert_eq!(panel_pos_z.power_generation(&sun_neg_y), 0.0);
-        assert_eq!(panel_pos_z.power_generation(&sun_pos_z), 0.0);
-        assert_eq!(panel_pos_z.power_generation(&sun_neg_z), 1.0);
+        assert_eq!(panel_pos_z.power_generation(&rotation, &sun_pos_x), 0.0);
+        assert_eq!(panel_pos_z.power_generation(&rotation, &sun_neg_x), 0.0);
+        assert_eq!(panel_pos_z.power_generation(&rotation, &sun_pos_y), 0.0);
+        assert_eq!(panel_pos_z.power_generation(&rotation, &sun_neg_y), 0.0);
+        assert_eq!(panel_pos_z.power_generation(&rotation, &sun_pos_z), 0.0);
+        assert_eq!(panel_pos_z.power_generation(&rotation, &sun_neg_z), 1.0);
 
-        assert_eq!(panel_neg_z.power_generation(&sun_pos_x), 0.0);
-        assert_eq!(panel_neg_z.power_generation(&sun_neg_x), 0.0);
-        assert_eq!(panel_neg_z.power_generation(&sun_pos_y), 0.0);
-        assert_eq!(panel_neg_z.power_generation(&sun_neg_y), 0.0);
-        assert_eq!(panel_neg_z.power_generation(&sun_pos_z), 1.0);
-        assert_eq!(panel_neg_z.power_generation(&sun_neg_z), 0.0);
+        assert_eq!(panel_neg_z.power_generation(&rotation, &sun_pos_x), 0.0);
+        assert_eq!(panel_neg_z.power_generation(&rotation, &sun_neg_x), 0.0);
+        assert_eq!(panel_neg_z.power_generation(&rotation, &sun_pos_y), 0.0);
+        assert_eq!(panel_neg_z.power_generation(&rotation, &sun_neg_y), 0.0);
+        assert_eq!(panel_neg_z.power_generation(&rotation, &sun_pos_z), 1.0);
+        assert_eq!(panel_neg_z.power_generation(&rotation, &sun_neg_z), 0.0);
     }
 
     #[test]
