@@ -238,15 +238,15 @@ impl CubeSat {
             .expect("No rotational velocity is set!");
         let rot = self.rot.as_mut().expect("No rotation is set!");
 
-        // Velocity
-        vel.x += acc.x * step;
-        vel.y += acc.y * step;
-        vel.z += acc.z * step;
-
         // Rotation
         rot.x += vel.x * step;
         rot.y += vel.y * step;
         rot.z += vel.z * step;
+
+        // Velocity
+        vel.x += acc.x * step;
+        vel.y += acc.y * step;
+        vel.z += acc.z * step;
     }
 
     pub fn iterate(&mut self) {
@@ -865,6 +865,50 @@ mod tests {
             cubesat.iterate();
         }
         assert_eq!(cubesat.active, false);
+    }
+
+    #[test]
+    fn update_rotation() {
+        let mut cubesat_pos = CubeSat::new()
+            .with_time(0.0, 10.0, 1.0)
+            .with_rotation(0.0, 0.0, 0.0)
+            .with_rotation_velocity(0.0, 0.0, 0.0)
+            .with_rotation_acceleration(1.0, 1.0, 1.0);
+        let mut cubesat_neg = CubeSat::new()
+            .with_time(0.0, 10.0, 1.0)
+            .with_rotation(0.0, 0.0, 0.0)
+            .with_rotation_velocity(0.0, 0.0, 0.0)
+            .with_rotation_acceleration(-1.0, -1.0, -1.0);
+
+        for _ in 0..10 {
+            cubesat_pos.update_rotation();
+            cubesat_neg.update_rotation();
+        }
+
+        assert_eq!(
+            cubesat_pos.rot,
+            Some(vector::Vector3::new(45.0, 45.0, 45.0))
+        );
+        assert_eq!(
+            cubesat_neg.rot,
+            Some(vector::Vector3::new(-45.0, -45.0, -45.0))
+        );
+        assert_eq!(
+            cubesat_pos.rot_vel,
+            Some(vector::Vector3::new(10.0, 10.0, 10.0))
+        );
+        assert_eq!(
+            cubesat_neg.rot_vel,
+            Some(vector::Vector3::new(-10.0, -10.0, -10.0))
+        );
+        assert_eq!(
+            cubesat_pos.rot_acc,
+            Some(vector::Vector3::new(1.0, 1.0, 1.0))
+        );
+        assert_eq!(
+            cubesat_neg.rot_acc,
+            Some(vector::Vector3::new(-1.0, -1.0, -1.0))
+        );
     }
 
     #[test]
