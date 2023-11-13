@@ -66,6 +66,7 @@ impl CubeSat {
         match orbit_type {
             "equatorial cosine" => self.orbit_type = Some(orbit::OrbitType::EquatorialCosine),
             "circular cosine" => self.orbit_type = Some(orbit::OrbitType::CircularCosine),
+            "parametric" => self.orbit_type = Some(orbit::OrbitType::Parametric),
             t => {
                 self.orbit_type = None;
                 println!("{} is not a valid orbit type!", t);
@@ -81,6 +82,8 @@ impl CubeSat {
                 ("radius", r) => parameters.set_radius(r),
                 ("inclination", i) => parameters.set_inclination(i),
                 ("argument of periapsis", ap) => parameters.set_argument_of_periapsis(ap),
+                ("semi-major axis", a) => parameters.set_semi_major_axis(a),
+                ("eccentricity", e) => parameters.set_eccentricity(e),
                 _ => {}
             }
         }
@@ -217,6 +220,7 @@ impl CubeSat {
             match orbit_type {
                 orbit::OrbitType::EquatorialCosine => orbit::orbit_equatorial_cosine(self),
                 orbit::OrbitType::CircularCosine => orbit::orbit_circular_cosine(self),
+                orbit::OrbitType::Parametric => orbit::orbit_parametric(self),
             }
         } else {
             panic!("No orbit type is set!");
@@ -320,6 +324,7 @@ impl CubeSat {
         match &self.orbit_type {
             Some(orbit::OrbitType::EquatorialCosine) => println!("\t\tType: Equatorial cosine"),
             Some(orbit::OrbitType::CircularCosine) => println!("\t\tType: Circular cosine"),
+            Some(orbit::OrbitType::Parametric) => println!("\t\tType: Parametric"),
             None => println!("\t\tNo orbit type is set!"),
         }
         match &self.orbit_parameters {
