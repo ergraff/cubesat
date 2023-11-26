@@ -256,6 +256,14 @@ impl CubeSat {
         vel.z += acc.z * step;
     }
 
+    pub fn rotate_sun(&mut self) {
+        let sun = self.sun.as_mut().expect("No sun is set!");
+        let step = self.time.as_ref().expect("No time is set!").step;
+        let angle_per_day = 2.0 * std::f64::consts::PI / (365.25 * time::DAY) * step;
+
+        *sun = sun.rot_z(angle_per_day);
+    }
+
     pub fn iterate(&mut self) {
         match self.time {
             Some(ref mut t) => {
@@ -289,6 +297,9 @@ impl CubeSat {
 
             // Update rotation
             self.update_rotation();
+
+            // Update sun
+            self.rotate_sun();
 
             // Save history
             self.save_history();

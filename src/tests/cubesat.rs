@@ -343,6 +343,55 @@ fn update_rotation() {
 }
 
 #[test]
+fn rotate_sun() {
+    let mut cubesat = CubeSat::new()
+        .with_time(0.0, 0.0, 1.0)
+        .with_sun(1.0, 0.0, 0.0);
+
+    // 0 months in
+    let sun = cubesat.sun.unwrap();
+    assert_eq!(sun.x, 1.0);
+    assert_eq!(sun.y, 0.0);
+    assert_eq!(sun.z, 0.0);
+
+    // 3 month in
+    let time = 90 * time::DAY as usize;
+    for _ in 0..time {
+        cubesat.rotate_sun();
+    }
+    let sun = cubesat.sun.unwrap();
+    assert!(0.0 < sun.y);
+    assert_eq!(sun.z, 0.0);
+
+    // 6 months in
+    let time = 90 * time::DAY as usize;
+    for _ in 0..time {
+        cubesat.rotate_sun();
+    }
+    let sun = cubesat.sun.unwrap();
+    assert!(sun.x < 0.0);
+    assert_eq!(sun.z, 0.0);
+
+    // 9 months in
+    let time = 90 * time::DAY as usize;
+    for _ in 0..time {
+        cubesat.rotate_sun();
+    }
+    let sun = cubesat.sun.unwrap();
+    assert!(sun.y < 0.0);
+    assert_eq!(sun.z, 0.0);
+
+    // 12 months in
+    let time = 183 * time::DAY as usize;
+    for _ in 0..time {
+        cubesat.rotate_sun();
+    }
+    let sun = cubesat.sun.unwrap();
+    assert!(0.0 < sun.x);
+    assert_eq!(sun.z, 0.0);
+}
+
+#[test]
 fn history_new() {
     let history = History::new();
     assert!(history.time.is_empty());
