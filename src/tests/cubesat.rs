@@ -43,12 +43,22 @@ fn with_orbit_type() {
 
 #[test]
 fn with_orbit_parameters() {
-    let cubesat = CubeSat::new().with_orbit_parameters(vec![("altitude", 500_000.0)]);
+    let cubesat = CubeSat::new().with_orbit_parameters(vec![
+        ("altitude", 500_000.0),
+        ("inclination", 0.1),
+        ("argument of periapsis", 1.0),
+        ("longitude of ascending node", 1.0),
+        ("semi-major axis", 500_000.0),
+        ("eccentricity", 0.1),
+    ]);
     assert_ne!(cubesat.orbit_parameters, None);
-    assert_eq!(
-        cubesat.orbit_parameters.as_ref().unwrap().radius.unwrap(),
-        orbit::RADIUS_EARTH + 500_000.0
-    );
+    let params = cubesat.orbit_parameters.unwrap();
+    assert_eq!(params.radius.unwrap(), orbit::RADIUS_EARTH + 500_000.0);
+    assert_eq!(params.inclination.unwrap(), 0.1);
+    assert_eq!(params.argument_of_periapsis.unwrap(), 1.0);
+    assert_eq!(params.longitude_of_ascending_node.unwrap(), 1.0);
+    assert_eq!(params.semi_major_axis.unwrap(), 500_000.0);
+    assert_eq!(params.eccentricity.unwrap(), 0.1);
 }
 
 #[test]
