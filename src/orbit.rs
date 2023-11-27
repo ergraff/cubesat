@@ -11,14 +11,12 @@ pub static RADIUS_EARTH: f64 = 6.3781e6; // [m]
 
 #[derive(Debug, PartialEq)]
 pub enum OrbitType {
-    EquatorialCosine,
     CircularCosine,
     Parametric,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct OrbitParameters {
-    // Equatorial and circular
     pub radius: Option<f64>,                      // [m]
     pub inclination: Option<f64>,                 // [deg]
     pub argument_of_periapsis: Option<f64>,       // [deg]
@@ -39,8 +37,8 @@ impl OrbitParameters {
         }
     }
 
-    pub fn set_radius(&mut self, radius: f64) {
-        self.radius = Some(RADIUS_EARTH + radius);
+    pub fn set_altitude(&mut self, altitude: f64) {
+        self.radius = Some(RADIUS_EARTH + altitude);
     }
 
     pub fn set_inclination(&mut self, inclination: f64) {
@@ -56,60 +54,12 @@ impl OrbitParameters {
     }
 
     pub fn set_semi_major_axis(&mut self, semi_major_axis: f64) {
-        self.semi_major_axis = Some(RADIUS_EARTH + semi_major_axis);
+        self.semi_major_axis = Some(semi_major_axis);
     }
 
     pub fn set_eccentricity(&mut self, eccentricity: f64) {
         self.eccentricity = Some(eccentricity);
     }
-}
-
-pub fn orbit_equatorial_cosine(cubesat: &mut cubesat::CubeSat) {
-    // Guards and values
-    let r = cubesat
-        .orbit_parameters
-        .as_ref()
-        .expect("No orbit parameters are set!")
-        .radius
-        .as_ref()
-        .expect("No radius is set!");
-    let pos = cubesat.pos.as_mut().expect("No position vector is set!");
-    let vel = cubesat.vel.as_mut().expect("No velocity vector is set!");
-    let acc = cubesat
-        .acc
-        .as_mut()
-        .expect("No acceleration vector is set!");
-    let time = cubesat.time.as_ref().expect("No time is set!");
-    let omega = (r.powi(3) / (CONST_G * MASS_EARTH)).powf(-0.5);
-
-    // Semi-major axis = radius r
-    // pos_x(t) = r * cos([r^3/GM]^-(1/2)*t)
-    // pos_y(t) = r * sin([r^3/GM]^-(1/2)*t)
-
-    // Calculate new vectors
-    // x = r * cos(wt)
-    // y = r * sin(wt)
-    *pos = vector::Vector3::new(
-        r * (omega * time.now).cos(),
-        r * (omega * time.now).sin(),
-        0.0,
-    );
-
-    // x' = -w * r * sin(wt)
-    // y' = w * r * cos(wt)
-    *vel = vector::Vector3::new(
-        -omega * r * (omega * time.now).sin(),
-        omega * r * (omega * time.now).cos(),
-        0.0,
-    );
-
-    // x'' = -w^2 * r * cos(wt)
-    // y'' = -w^2 * r * sin(wt)
-    *acc = vector::Vector3::new(
-        -omega * omega * r * (omega * time.now).cos(),
-        -omega * omega * r * (omega * time.now).sin(),
-        0.0,
-    );
 }
 
 pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
@@ -120,7 +70,7 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
         .orbit_parameters
         .as_ref()
         .expect("No orbit parameters are set!");
-    let r = parameters.radius.as_ref().expect("No radius is set!");
+    let alt = parameters.radius.as_ref().expect("No altitude is set!");
     let inc = parameters
         .inclination
         .as_ref()
@@ -134,7 +84,7 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
         .as_mut()
         .expect("No acceleration vector is set!");
     let time = cubesat.time.as_ref().expect("No time is set!");
-    let omega = (r.powi(3) / (CONST_G * MASS_EARTH)).powf(-0.5);
+    let omega = (alt.powi(3) / (CONST_G * MASS_EARTH)).powf(-0.5);
     let ang_to_rad = std::f64::consts::PI / 180.0;
 
     // Semi-major axis = radius
@@ -145,8 +95,8 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
     // x = r * cos(wt)
     // y = r * sin(wt)
     *pos = vector::Vector3::new(
-        r * (omega * time.now).cos(),
-        r * (omega * time.now).sin(),
+        alt * (omega * time.now).cos(),
+        alt * (omega * time.now).sin(),
         0.0,
     )
     .rot_y(*inc * ang_to_rad)
@@ -155,8 +105,8 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
     // x' = -w * r * sin(wt)
     // y' =  w * r * cos(wt)
     *vel = vector::Vector3::new(
-        -omega * r * (omega * time.now).sin(),
-        omega * r * (omega * time.now).cos(),
+        -omega * alt * (omega * time.now).sin(),
+        omega * alt * (omega * time.now).cos(),
         0.0,
     )
     .rot_y(*inc * ang_to_rad)
@@ -165,8 +115,8 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
     // x'' = -w^2 * r * cos(wt)
     // y'' = -w^2 * r * sin(wt)
     *acc = vector::Vector3::new(
-        -omega * omega * r * (omega * time.now).cos(),
-        -omega * omega * r * (omega * time.now).sin(),
+        -omega * omega * alt * (omega * time.now).cos(),
+        -omega * omega * alt * (omega * time.now).sin(),
         0.0,
     )
     .rot_y(*inc * ang_to_rad)

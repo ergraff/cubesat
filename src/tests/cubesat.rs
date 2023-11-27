@@ -33,17 +33,17 @@ fn with_time() {
 
 #[test]
 fn with_orbit_type() {
-    let cubesat = CubeSat::new().with_orbit_type("equatorial cosine");
+    let cubesat = CubeSat::new().with_orbit_type("circular cosine");
     assert_ne!(cubesat.orbit_type, None);
     assert_eq!(
         cubesat.orbit_type.unwrap(),
-        orbit::OrbitType::EquatorialCosine
+        orbit::OrbitType::CircularCosine
     );
 }
 
 #[test]
 fn with_orbit_parameters() {
-    let cubesat = CubeSat::new().with_orbit_parameters(vec![("radius", 500_000.0)]);
+    let cubesat = CubeSat::new().with_orbit_parameters(vec![("altitude", 500_000.0)]);
     assert_ne!(cubesat.orbit_parameters, None);
     assert_eq!(
         cubesat.orbit_parameters.as_ref().unwrap().radius.unwrap(),

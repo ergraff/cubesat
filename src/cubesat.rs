@@ -67,7 +67,6 @@ impl CubeSat {
 
     pub fn with_orbit_type(mut self, orbit_type: &str) -> Self {
         match orbit_type {
-            "equatorial cosine" => self.orbit_type = Some(orbit::OrbitType::EquatorialCosine),
             "circular cosine" => self.orbit_type = Some(orbit::OrbitType::CircularCosine),
             "parametric" => self.orbit_type = Some(orbit::OrbitType::Parametric),
             t => {
@@ -82,7 +81,7 @@ impl CubeSat {
         let mut parameters = orbit::OrbitParameters::new();
         for p in orbit_parameters {
             match p {
-                ("radius", r) => parameters.set_radius(r),
+                ("altitude", r) => parameters.set_altitude(r),
                 ("inclination", i) => parameters.set_inclination(i),
                 ("argument of periapsis", ap) => parameters.set_argument_of_periapsis(ap),
                 ("longitude of ascending node", lan) => {
@@ -224,7 +223,6 @@ impl CubeSat {
     pub fn update_orbit(&mut self) {
         if let Some(orbit_type) = &self.orbit_type {
             match orbit_type {
-                orbit::OrbitType::EquatorialCosine => orbit::orbit_equatorial_cosine(self),
                 orbit::OrbitType::CircularCosine => orbit::orbit_circular_cosine(self),
                 orbit::OrbitType::Parametric => orbit::orbit_parametric(self),
             }
@@ -339,7 +337,6 @@ impl CubeSat {
         // Orbit
         println!("\tOrbit:");
         match &self.orbit_type {
-            Some(orbit::OrbitType::EquatorialCosine) => println!("\t\tType: Equatorial cosine"),
             Some(orbit::OrbitType::CircularCosine) => println!("\t\tType: Circular cosine"),
             Some(orbit::OrbitType::Parametric) => println!("\t\tType: Parametric"),
             None => println!("\t\tNo orbit type is set!"),
@@ -347,7 +344,7 @@ impl CubeSat {
         match &self.orbit_parameters {
             Some(p) => {
                 if let Some(r) = p.radius {
-                    println!("\t\tRadius: {} m", r);
+                    println!("\t\tAltitude: {} m", r);
                 }
             }
             None => println!("\t\tNo orbit parameters are set!"),
