@@ -19,10 +19,11 @@ pub enum OrbitType {
 #[derive(Debug, PartialEq)]
 pub struct OrbitParameters {
     // Equatorial and circular
-    pub radius: Option<f64>,                // [m]
-    pub inclination: Option<f64>,           // [deg]
-    pub argument_of_periapsis: Option<f64>, // [deg]
-    pub semi_major_axis: Option<f64>,       // [m]
+    pub radius: Option<f64>,                      // [m]
+    pub inclination: Option<f64>,                 // [deg]
+    pub argument_of_periapsis: Option<f64>,       // [deg]
+    pub longitude_of_ascending_node: Option<f64>, // [deg]
+    pub semi_major_axis: Option<f64>,             // [m]
     pub eccentricity: Option<f64>,
 }
 
@@ -32,6 +33,7 @@ impl OrbitParameters {
             radius: None,
             inclination: None,
             argument_of_periapsis: None,
+            longitude_of_ascending_node: None,
             semi_major_axis: None,
             eccentricity: None,
         }
@@ -47,6 +49,10 @@ impl OrbitParameters {
 
     pub fn set_argument_of_periapsis(&mut self, argument_of_periapsis: f64) {
         self.argument_of_periapsis = Some(argument_of_periapsis);
+    }
+
+    pub fn set_longitude_of_ascending_node(&mut self, longitude_of_ascending_node: f64) {
+        self.longitude_of_ascending_node = Some(longitude_of_ascending_node);
     }
 
     pub fn set_semi_major_axis(&mut self, semi_major_axis: f64) {
@@ -196,6 +202,10 @@ pub fn orbit_parametric(cubesat: &mut cubesat::CubeSat) {
         .argument_of_periapsis
         .as_ref()
         .expect("No argument of periapsis is set!");
+    let lan = parameters
+        .longitude_of_ascending_node
+        .as_ref()
+        .expect("No longitude of ascending node is set!");
     let PI = std::f64::consts::PI;
     let ang_to_rad = PI / 180.0;
 
@@ -236,9 +246,10 @@ pub fn orbit_parametric(cubesat: &mut cubesat::CubeSat) {
         p * v.sin() / (1.0 + ecc * v.cos()),
         0.0,
     )
-    // 3.5 Rotate position vector by inclination and argument of periapsis
+    // 3.5 Rotate position vector by inclination, argument of periapsis, longitude of ascending node
+    .rot_z(*ap * ang_to_rad)
     .rot_y(*inc * ang_to_rad)
-    .rot_z(*ap * ang_to_rad);
+    .rot_z(*lan * ang_to_rad);
 
     // 4. Calculate velocity vector using v, µ, p, e
     *vel = vector::Vector3::new(
@@ -246,9 +257,10 @@ pub fn orbit_parametric(cubesat: &mut cubesat::CubeSat) {
         (CONST_MU / p).sqrt() * (ecc + v.cos()),
         0.0,
     )
-    // 4.5 Rotate velocity vector by inclination and argument of periapsis
+    // 4.5 Rotate velocity vector by inclination, argument of periapsis, longitude of ascending node
+    .rot_z(*ap * ang_to_rad)
     .rot_y(*inc * ang_to_rad)
-    .rot_z(*ap * ang_to_rad);
+    .rot_z(*lan * ang_to_rad);
 
     // (Acceleration?)
 }

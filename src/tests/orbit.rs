@@ -117,6 +117,7 @@ fn orbit_parametric() {
             ("semi-major axis", 500_000.0),
             ("inclination", 0.0),
             ("argument of periapsis", 0.0),
+            ("longitude of ascending node", 0.0),
             ("eccentricity", 0.001),
         ])
         .with_position(0.0, 0.0, 0.0)
@@ -149,6 +150,7 @@ fn orbit_parametric() {
             ("semi-major axis", 500_000.0),
             ("inclination", 90.0),
             ("argument of periapsis", 45.0),
+            ("longitude of ascending node", 45.0),
             ("eccentricity", 0.001),
         ])
         .with_position(0.0, 0.0, 0.0)

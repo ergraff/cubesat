@@ -85,6 +85,9 @@ impl CubeSat {
                 ("radius", r) => parameters.set_radius(r),
                 ("inclination", i) => parameters.set_inclination(i),
                 ("argument of periapsis", ap) => parameters.set_argument_of_periapsis(ap),
+                ("longitude of ascending node", lan) => {
+                    parameters.set_longitude_of_ascending_node(lan)
+                }
                 ("semi-major axis", a) => parameters.set_semi_major_axis(a),
                 ("eccentricity", e) => parameters.set_eccentricity(e),
                 _ => {}
