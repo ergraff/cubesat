@@ -81,21 +81,43 @@ impl Eps {
 #[derive(Debug, PartialEq)]
 pub struct Component {
     pub name: String,
-    pub consumption: f64,
+    pub active: bool,
+    pub consumption_passive: f64,
+    pub consumption_active: Option<f64>,
+    pub activation_interval: Option<f64>,
+    pub activation_duration: Option<f64>,
 }
 
 impl Component {
-    pub fn new(name: &str, consumption: f64) -> Self {
+    pub fn new(
+        name: &str,
+        consumption_passive: f64,
+        consumption_active: Option<f64>,
+        activation_interval: Option<f64>,
+        activation_duration: Option<f64>,
+    ) -> Self {
         Component {
             name: name.to_string(),
-            consumption,
+            active: false,
+            consumption_passive,
+            consumption_active,
+            activation_interval,
+            activation_duration,
         }
     }
 
     pub fn print(&self) {
+        let name = &self.name;
+        let active = self.active;
+        let consumption = match self.active {
+            true => self
+                .consumption_active
+                .expect("No active consumption is set!"),
+            false => self.consumption_passive,
+        };
         println!(
-            "\t\tName: {}, consumption: {} W",
-            self.name, self.consumption
+            "\t\tName: {}, active: {}, consumption: {} W",
+            name, active, consumption
         );
     }
 }

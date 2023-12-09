@@ -201,13 +201,16 @@ fn with_eps() {
 
 #[test]
 fn with_component() {
-    let cubesat = CubeSat::new().with_component("ADCS", -1.0);
+    let cubesat = CubeSat::new().with_component("ADCS", -1.0, Some(-2.0), Some(10.0), Some(5.0));
     assert_ne!(cubesat.components, None);
     assert_eq!(
         cubesat.components.as_ref().unwrap()[0].name,
         "ADCS".to_string()
     );
-    assert_eq!(cubesat.components.as_ref().unwrap()[0].consumption, -1.0);
+    assert_eq!(
+        cubesat.components.as_ref().unwrap()[0].consumption_passive,
+        -1.0
+    );
 }
 
 #[test]
@@ -399,6 +402,38 @@ fn rotate_sun() {
     let sun = cubesat.sun.unwrap();
     assert!(0.0 < sun.x);
     assert_eq!(sun.z, 0.0);
+}
+
+#[test]
+fn update_active_components() {
+    let mut cubesat = CubeSat::new().with_time(0.0, 10.0, 1.0).with_component(
+        "Component",
+        -1.0,
+        Some(-2.0),
+        Some(3.0),
+        Some(2.0),
+    );
+    // Initially deactivated
+    assert_eq!(cubesat.components.as_ref().unwrap()[0].active, false);
+
+    // Until activated
+    for _ in 0..3 {
+        cubesat.iterate();
+        cubesat.update_active_components(&cubesat.time.as_ref().unwrap().now.clone());
+    }
+    assert_eq!(cubesat.components.as_ref().unwrap()[0].active, true);
+
+    // Until deactivated
+    for _ in 0..2 {
+        cubesat.iterate();
+        cubesat.update_active_components(&cubesat.time.as_ref().unwrap().now.clone());
+    }
+    assert_eq!(cubesat.components.as_ref().unwrap()[0].active, false);
+
+    // Active again
+    cubesat.iterate();
+    cubesat.update_active_components(&cubesat.time.as_ref().unwrap().now.clone());
+    assert_eq!(cubesat.components.as_ref().unwrap()[0].active, true);
 }
 
 #[test]

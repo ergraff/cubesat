@@ -92,7 +92,11 @@ fn eps() {
 
 #[test]
 fn component() {
-    let comp = Component::new("ADCS", -1.0);
-    assert_eq!(comp.name, "ADCS".to_string());
-    assert_eq!(comp.consumption, -1.0);
+    let component = Component::new("ADCS", -1.0, Some(-2.0), Some(40.0), Some(20.0));
+    assert_eq!(component.name, "ADCS".to_string());
+    assert_eq!(component.active, false);
+    assert_eq!(component.consumption_passive, -1.0);
+    assert_eq!(component.consumption_active, Some(-2.0));
+    assert_eq!(component.activation_interval, Some(40.0));
+    assert_eq!(component.activation_duration, Some(20.0));
 }

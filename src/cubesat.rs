@@ -155,14 +155,58 @@ impl CubeSat {
         self
     }
 
-    pub fn with_component(mut self, name: &str, power_consumption: f64) -> Self {
+    pub fn with_component(
+        mut self,
+        name: &str,
+        consumption_passive: f64,
+        consumption_active: Option<f64>,
+        activation_interval: Option<f64>,
+        activation_duration: Option<f64>,
+    ) -> Self {
         match self.components {
-            Some(ref mut c) => c.push(component::Component::new(name, power_consumption)),
+            Some(ref mut c) => c.push(component::Component::new(
+                name,
+                consumption_passive,
+                consumption_active,
+                activation_interval,
+                activation_duration,
+            )),
             None => {
-                self.components = Some(vec![component::Component::new(name, power_consumption)])
+                self.components = Some(vec![component::Component::new(
+                    name,
+                    consumption_passive,
+                    consumption_active,
+                    activation_interval,
+                    activation_duration,
+                )])
             }
         }
         self
+    }
+
+    pub fn update_active_components(&mut self, time: &f64) {
+        let components = self.components.as_mut().expect("No components are set!");
+        for component in components {
+            match (component.activation_interval, component.activation_duration) {
+                // Component cannot be active
+                (_, None) => continue,
+                // Component can be active
+                (Some(interval), Some(duration)) => {
+                    // Activate component
+                    if time % interval == 0.0 {
+                        component.active = true;
+                    }
+                    // Deactivate component
+                    if time % interval >= duration {
+                        component.active = false;
+                    }
+                }
+                // Component is incorrectly set
+                _ => {
+                    panic!("Component {:?} is incorrectly set!", component);
+                }
+            }
+        }
     }
 
     pub fn in_eclipse(&self) -> bool {
@@ -215,7 +259,13 @@ impl CubeSat {
             consumption += eps.consumption;
         }
         if let Some(components) = &self.components {
-            consumption += components.iter().map(|c| c.consumption).sum::<f64>();
+            consumption += components
+                .iter()
+                .map(|c| match c.active {
+                    true => c.consumption_active.expect("No active consumption is set!"),
+                    false => c.consumption_passive,
+                })
+                .sum::<f64>();
         }
         consumption
     }
@@ -321,6 +371,9 @@ impl CubeSat {
             let step = self.time.as_ref().expect("No time is set!").step;
             let eps = self.eps.as_mut().expect("No EPS is set!");
             eps.update_capacity(power, step);
+
+            // Update active components
+            self.update_active_components(&self.time.expect("No time is set!").now);
 
             // Next time step
             self.iterate();
