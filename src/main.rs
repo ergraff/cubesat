@@ -35,7 +35,8 @@ fn main() {
             1.0,
         )
         .with_eps(-0.3, 10.0)
-        .with_component("ADCS", -0.2, Some(-0.4), Some(100.0), Some(10.0));
+        .with_component("ADCS", -0.2, Some(-0.4), Some(100.0), Some(10.0))
+        .with_safety_limit(20.0);
 
     cubesat.print();
     cubesat.simulate();

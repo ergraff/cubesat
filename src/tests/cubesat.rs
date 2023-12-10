@@ -5,13 +5,23 @@ use crate::cubesat::*;
 fn new() {
     let cubesat = CubeSat::new();
     assert_eq!(cubesat.name, Option::None);
+    assert_eq!(cubesat.active, true);
+    assert_eq!(cubesat.history, History::new());
+    assert_eq!(cubesat.safe_mode, false);
+    assert_eq!(cubesat.safe_limit, Option::None);
     assert_eq!(cubesat.orbit_type, Option::None);
     assert_eq!(cubesat.orbit_parameters, Option::None);
     assert_eq!(cubesat.time, Option::None);
     assert_eq!(cubesat.pos, Option::None);
     assert_eq!(cubesat.vel, Option::None);
-    assert_eq!(cubesat.vel, Option::None);
+    assert_eq!(cubesat.acc, Option::None);
     assert_eq!(cubesat.rot, Option::None);
+    assert_eq!(cubesat.rot_vel, Option::None);
+    assert_eq!(cubesat.rot_acc, Option::None);
+    assert_eq!(cubesat.sun, Option::None);
+    assert_eq!(cubesat.solar_panels, Option::None);
+    assert_eq!(cubesat.eps, Option::None);
+    assert_eq!(cubesat.components, Option::None);
 }
 
 #[test]
@@ -211,6 +221,13 @@ fn with_component() {
         cubesat.components.as_ref().unwrap()[0].consumption_passive,
         -1.0
     );
+}
+
+#[test]
+fn with_safety_limit() {
+    let cubesat = CubeSat::new().with_safety_limit(50.0);
+    assert_eq!(cubesat.safe_mode, false);
+    assert_eq!(cubesat.safe_limit, Option::Some(50.0));
 }
 
 #[test]
@@ -419,21 +436,59 @@ fn update_active_components() {
     // Until activated
     for _ in 0..3 {
         cubesat.iterate();
-        cubesat.update_active_components(&cubesat.time.as_ref().unwrap().now.clone());
+        cubesat.update_active_components(
+            &cubesat.time.as_ref().unwrap().now.clone(),
+            cubesat.safe_mode.clone(),
+        );
     }
     assert_eq!(cubesat.components.as_ref().unwrap()[0].active, true);
 
     // Until deactivated
     for _ in 0..2 {
         cubesat.iterate();
-        cubesat.update_active_components(&cubesat.time.as_ref().unwrap().now.clone());
+        cubesat.update_active_components(
+            &cubesat.time.as_ref().unwrap().now.clone(),
+            cubesat.safe_mode.clone(),
+        );
     }
     assert_eq!(cubesat.components.as_ref().unwrap()[0].active, false);
 
     // Active again
     cubesat.iterate();
-    cubesat.update_active_components(&cubesat.time.as_ref().unwrap().now.clone());
+    cubesat.update_active_components(
+        &cubesat.time.as_ref().unwrap().now.clone(),
+        cubesat.safe_mode.clone(),
+    );
     assert_eq!(cubesat.components.as_ref().unwrap()[0].active, true);
+}
+
+#[test]
+fn battery_percentage() {
+    let mut cubesat = CubeSat::new().with_eps(0.0, 10.0);
+    cubesat.eps.as_mut().unwrap().charge = 0.0;
+    assert_eq!(cubesat.battery_percentage(), 0.0);
+    cubesat.eps.as_mut().unwrap().charge = 5.0;
+    assert_eq!(cubesat.battery_percentage(), 50.0);
+    cubesat.eps.as_mut().unwrap().charge = 10.0;
+    assert_eq!(cubesat.battery_percentage(), 100.0);
+}
+
+#[test]
+fn check_safety_limit() {
+    let mut cubesat = CubeSat::new().with_eps(0.0, 10.0).with_safety_limit(50.0);
+
+    // Initially = false
+    assert_eq!(cubesat.safe_mode, false);
+
+    // Below limit = true
+    cubesat.eps.as_mut().unwrap().charge = 4.0;
+    cubesat.check_safety_limit();
+    assert_eq!(cubesat.safe_mode, true);
+
+    // Above limit = false
+    cubesat.eps.as_mut().unwrap().charge = 6.0;
+    cubesat.check_safety_limit();
+    assert_eq!(cubesat.safe_mode, false);
 }
 
 #[test]

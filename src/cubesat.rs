@@ -13,6 +13,10 @@ pub struct CubeSat {
     pub active: bool,
     pub history: History,
 
+    // Safe mode
+    pub safe_mode: bool,
+    pub safe_limit: Option<f64>,
+
     // Orbit
     pub orbit_type: Option<orbit::OrbitType>,
     pub orbit_parameters: Option<orbit::OrbitParameters>,
@@ -39,6 +43,8 @@ impl CubeSat {
             name: None,
             active: true,
             history: History::new(),
+            safe_mode: false,
+            safe_limit: None,
             orbit_type: None,
             orbit_parameters: None,
             time: None,
@@ -184,7 +190,12 @@ impl CubeSat {
         self
     }
 
-    pub fn update_active_components(&mut self, time: &f64) {
+    pub fn with_safety_limit(mut self, limit: f64) -> Self {
+        self.safe_limit = Some(limit);
+        self
+    }
+
+    pub fn update_active_components(&mut self, time: &f64, safe_mode: bool) {
         let components = self.components.as_mut().expect("No components are set!");
         for component in components {
             match (component.activation_interval, component.activation_duration) {
@@ -193,11 +204,11 @@ impl CubeSat {
                 // Component can be active
                 (Some(interval), Some(duration)) => {
                     // Activate component
-                    if time % interval == 0.0 {
+                    if time % interval == 0.0 && !safe_mode {
                         component.active = true;
                     }
                     // Deactivate component
-                    if time % interval >= duration {
+                    if time % interval >= duration || safe_mode {
                         component.active = false;
                     }
                 }
@@ -270,6 +281,11 @@ impl CubeSat {
         consumption
     }
 
+    pub fn battery_percentage(&self) -> f64 {
+        let eps = self.eps.as_ref().expect("No EPS is set!");
+        100.0 * eps.charge / eps.max_charge
+    }
+
     pub fn update_orbit(&mut self) {
         if let Some(orbit_type) = &self.orbit_type {
             match orbit_type {
@@ -315,6 +331,12 @@ impl CubeSat {
         *sun = sun.rot_z(angle_per_day);
     }
 
+    pub fn check_safety_limit(&mut self) {
+        if let Some(limit) = self.safe_limit {
+            self.safe_mode = self.battery_percentage() <= limit;
+        }
+    }
+
     pub fn iterate(&mut self) {
         match self.time {
             Some(ref mut t) => {
@@ -343,6 +365,15 @@ impl CubeSat {
     pub fn simulate(&mut self) {
         // Loop until end
         while self.active {
+            // Check safety limit
+            self.check_safety_limit();
+
+            // Update active components
+            self.update_active_components(
+                &self.time.expect("No time is set!").now,
+                self.safe_mode.clone(),
+            );
+
             // Update orbit
             self.update_orbit();
 
@@ -371,9 +402,6 @@ impl CubeSat {
             let step = self.time.as_ref().expect("No time is set!").step;
             let eps = self.eps.as_mut().expect("No EPS is set!");
             eps.update_capacity(power, step);
-
-            // Update active components
-            self.update_active_components(&self.time.expect("No time is set!").now);
 
             // Next time step
             self.iterate();
@@ -481,8 +509,11 @@ impl CubeSat {
         println!("\tEPS:");
         match &self.eps {
             Some(e) => println!(
-                "\t\tConsumption: {} W\n\t\tCharge: {} Wh\n\t\tMax. charge: {} Wh",
-                e.consumption, e.charge, e.max_charge
+                "\t\tConsumption: {} W\n\t\tCharge: {:.4} Wh ({:.2}%)\n\t\tMax. charge: {} Wh",
+                e.consumption,
+                e.charge,
+                self.battery_percentage(),
+                e.max_charge
             ),
             None => println!("\t\tNo EPS has been set!"),
         }
@@ -499,6 +530,7 @@ impl CubeSat {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct History {
     time: Vec<f64>,
     pos: Vec<(f64, f64, f64)>,
