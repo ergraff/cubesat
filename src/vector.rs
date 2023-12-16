@@ -1,7 +1,9 @@
 #[path = "./tests/vector.rs"]
 mod tests;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+use serde::Deserialize;
+
+#[derive(Debug, PartialEq, Clone, Copy, Deserialize)]
 pub struct Vector3 {
     pub x: f64,
     pub y: f64,

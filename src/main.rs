@@ -8,12 +8,13 @@ fn main() {
     let mut cubesat = cubesat::CubeSat::new()
         .with_name("APTAS")
         .with_time(0.0, 10000.0, 1.0)
-        .with_orbit_type("parametric")
+        .with_orbit_type("circular cosine")
         .with_orbit_parameters(vec![
             ("inclination", 20.0),
             ("argument of periapsis", 25.0),
             ("longitude of ascending node", 15.0),
-            ("semi-major axis", orbit::RADIUS_EARTH + 1_000_000.0),
+            ("altitude", orbit::RADIUS_EARTH + 1_000_000.0), // Circular
+            ("semi-major axis", orbit::RADIUS_EARTH + 1_000_000.0), // Parametric
             ("eccentricity", 0.1),
         ])
         .with_position(0.0, 0.0, 0.0)

@@ -8,13 +8,21 @@ use crate::vector;
 use std::fs::File;
 use std::io::Write;
 
+use serde::Deserialize;
+
+#[derive(Deserialize)]
 pub struct CubeSat {
+    #[serde(default = "CubeSat::default_name")]
     pub name: Option<String>,
+    #[serde(default = "CubeSat::default_active")]
     pub active: bool,
+    #[serde(default = "CubeSat::default_history")]
     pub history: History,
 
     // Safe mode
+    #[serde(default = "CubeSat::default_safe_mode")]
     pub safe_mode: bool,
+    #[serde(default = "CubeSat::default_safe_limit")]
     pub safe_limit: Option<f64>,
 
     // Orbit
@@ -23,12 +31,19 @@ pub struct CubeSat {
     pub time: Option<time::Time>,
 
     // Vectors
+    #[serde(default = "CubeSat::default_vector")]
     pub pos: Option<vector::Vector3>,
+    #[serde(default = "CubeSat::default_vector")]
     pub vel: Option<vector::Vector3>,
+    #[serde(default = "CubeSat::default_vector")]
     pub acc: Option<vector::Vector3>,
+    #[serde(default = "CubeSat::default_vector")]
     pub rot: Option<vector::Vector3>,
+    #[serde(default = "CubeSat::default_vector")]
     pub rot_vel: Option<vector::Vector3>,
+    #[serde(default = "CubeSat::default_vector")]
     pub rot_acc: Option<vector::Vector3>,
+    #[serde(default = "CubeSat::default_sun")]
     pub sun: Option<vector::Vector3>,
 
     // Components
@@ -38,6 +53,11 @@ pub struct CubeSat {
 }
 
 impl CubeSat {
+    pub fn from_toml(path: &str) -> Self {
+        let file = std::fs::read_to_string(path).unwrap();
+        toml::from_str(&file).unwrap()
+    }
+
     pub fn new() -> Self {
         CubeSat {
             name: None,
@@ -528,9 +548,32 @@ impl CubeSat {
             None => println!("\t\tNo components have been set!"),
         }
     }
+
+    // Default values for deserialization
+    fn default_name() -> Option<String> {
+        Some("CubeSat".to_string())
+    }
+    fn default_active() -> bool {
+        true
+    }
+    fn default_history() -> History {
+        History::new()
+    }
+    fn default_safe_mode() -> bool {
+        false
+    }
+    fn default_vector() -> Option<vector::Vector3> {
+        Some(vector::Vector3::origin())
+    }
+    fn default_sun() -> Option<vector::Vector3> {
+        Some(vector::Vector3::new(1.0, 0.0, 0.0))
+    }
+    fn default_safe_limit() -> Option<f64> {
+        Some(0.0)
+    }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct History {
     time: Vec<f64>,
     pos: Vec<(f64, f64, f64)>,

@@ -4,7 +4,9 @@ mod tests;
 use crate::time;
 use crate::vector;
 
-#[derive(Debug, PartialEq)]
+use serde::Deserialize;
+
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct SolarPanel {
     pub orientation: vector::Vector3,
     pub power_generation: f64, // [W]
@@ -37,7 +39,7 @@ impl SolarPanel {
     }
 }
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Deserialize)]
 pub struct Eps {
     pub consumption: f64, // [W]
     pub charge: f64,      // [Wh]
@@ -78,9 +80,11 @@ impl Eps {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct Component {
+    #[serde(default = "Component::default_name")]
     pub name: String,
+    #[serde(default = "Component::default_active")]
     pub active: bool,
     pub consumption_passive: f64,
     pub consumption_active: Option<f64>,
@@ -119,5 +123,13 @@ impl Component {
             "\t\tName: {}, active: {}, consumption: {} W",
             name, active, consumption
         );
+    }
+
+    // Default values for deserialization
+    fn default_name() -> String {
+        "Component".to_string()
+    }
+    fn default_active() -> bool {
+        false
     }
 }

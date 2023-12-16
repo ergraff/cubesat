@@ -2,6 +2,71 @@
 use crate::cubesat::*;
 
 #[test]
+fn new_toml_complete() {
+    let cubesat = CubeSat::from_toml("src/tests/complete.toml");
+
+    let orbit_type = orbit::OrbitType::CircularCosine;
+    let params = orbit::OrbitParameters {
+        radius: Some(6871000.0),
+        inclination: Some(0.0),
+        argument_of_periapsis: Some(0.0),
+        longitude_of_ascending_node: Some(0.0),
+        semi_major_axis: Some(6871000.0),
+        eccentricity: Some(0.0),
+    };
+    let time = time::Time::new(0.0, 100.0, 1.0);
+    let vec = vector::Vector3::new(1.0, 1.0, 1.0);
+    let sun = vector::Vector3::new(1.0, 0.0, 0.0);
+    let panel = component::SolarPanel::new(1.0, 1.0, 0.0, 0.0);
+    let eps = component::Eps::new(-1.0, 10.0);
+    let component =
+        component::Component::new("Component", -1.0, Some(-2.0), Some(100.0), Some(10.0));
+
+    assert_eq!(cubesat.name, Some("APTAS".to_string()));
+    assert_eq!(cubesat.active, true);
+    assert_eq!(cubesat.history, History::new());
+    assert_eq!(cubesat.safe_mode, false);
+    assert_eq!(cubesat.safe_limit, Some(20.0));
+    assert_eq!(cubesat.orbit_type, Some(orbit_type));
+    assert_eq!(cubesat.orbit_parameters, Some(params));
+    assert_eq!(cubesat.time, Some(time));
+    assert_eq!(cubesat.pos, Some(vec));
+    assert_eq!(cubesat.vel, Some(vec));
+    assert_eq!(cubesat.acc, Some(vec));
+    assert_eq!(cubesat.rot, Some(vec));
+    assert_eq!(cubesat.rot_vel, Some(vec));
+    assert_eq!(cubesat.rot_acc, Some(vec));
+    assert_eq!(cubesat.sun, Some(sun));
+    assert_eq!(cubesat.solar_panels.unwrap()[0], panel);
+    assert_eq!(cubesat.eps, Some(eps));
+    assert_eq!(cubesat.components, Some(vec![component]));
+}
+
+#[test]
+fn new_toml_default() {
+    let cubesat = CubeSat::from_toml("src/tests/default.toml");
+
+    assert_eq!(cubesat.name, Some("CubeSat".to_string()));
+    assert_eq!(cubesat.active, true);
+    assert_eq!(cubesat.history, History::new());
+    assert_eq!(cubesat.safe_mode, false);
+    assert_eq!(cubesat.safe_limit, Some(0.0));
+    assert_eq!(cubesat.orbit_type, None);
+    assert_eq!(cubesat.orbit_parameters, None);
+    assert_eq!(cubesat.time, None);
+    assert_eq!(cubesat.pos, Some(vector::Vector3::origin()));
+    assert_eq!(cubesat.vel, Some(vector::Vector3::origin()));
+    assert_eq!(cubesat.acc, Some(vector::Vector3::origin()));
+    assert_eq!(cubesat.rot, Some(vector::Vector3::origin()));
+    assert_eq!(cubesat.rot_vel, Some(vector::Vector3::origin()));
+    assert_eq!(cubesat.rot_acc, Some(vector::Vector3::origin()));
+    assert_eq!(cubesat.sun, Some(vector::Vector3::new(1.0, 0.0, 0.0)));
+    assert_eq!(cubesat.solar_panels, None);
+    assert_eq!(cubesat.eps, None);
+    assert_eq!(cubesat.components, None);
+}
+
+#[test]
 fn new() {
     let cubesat = CubeSat::new();
     assert_eq!(cubesat.name, Option::None);

@@ -4,18 +4,22 @@ mod tests;
 use crate::cubesat;
 use crate::vector;
 
+use serde::Deserialize;
+use serde_repr::Deserialize_repr;
+
 static CONST_G: f64 = 6.6743015e-11; // [N*m^2*kg^-2]
 static MASS_EARTH: f64 = 5.9722e24; // [kg]
 static CONST_MU: f64 = CONST_G * MASS_EARTH;
 pub static RADIUS_EARTH: f64 = 6.3781e6; // [m]
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize_repr)]
+#[repr(u8)]
 pub enum OrbitType {
     CircularCosine,
     Parametric,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct OrbitParameters {
     pub radius: Option<f64>,                      // [m]
     pub inclination: Option<f64>,                 // [deg]

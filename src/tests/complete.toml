@@ -1,0 +1,76 @@
+name = "APTAS"
+active = true
+
+# Safe mode
+safe_mode = false
+safe_limit = 20.0
+
+# Orbit
+orbit_type = 0 # CircularCosine
+
+[orbit_parameters]
+radius = 6871000.0
+inclination = 0.0
+argument_of_periapsis = 0.0
+longitude_of_ascending_node = 0.0
+semi_major_axis = 6871000.0
+eccentricity = 0.0
+
+[time]
+now = 0.0
+step = 1.0
+start = 0.0
+end = 100.0
+
+# Vectors
+[pos]
+x = 1.0
+y = 1.0
+z = 1.0
+
+[vel]
+x = 1.0
+y = 1.0
+z = 1.0
+
+[acc]
+x = 1.0
+y = 1.0
+z = 1.0
+
+[rot]
+x = 1.0
+y = 1.0
+z = 1.0
+
+[rot_vel]
+x = 1.0
+y = 1.0
+z = 1.0
+
+[rot_acc]
+x = 1.0
+y = 1.0
+z = 1.0
+
+[sun]
+x = 1.0
+y = 0.0
+z = 0.0
+
+# Components
+[[solar_panels]]
+power_generation = 1.0
+orientation = [1.0, 0.0, 0.0]
+
+[eps]
+consumption = -1.0
+charge = 10.0
+max_charge = 10.0
+
+[[components]]
+name = "Component"
+consumption_passive = -1.0
+consumption_active = -2.0
+activation_interval = 100.0
+activation_duration = 10.0
