@@ -23,6 +23,7 @@ fn orbit_circular_cosine() {
             ("altitude", 500_000.0),
             ("inclination", 0.0),
             ("argument of periapsis", 0.0),
+            ("longitude of ascending node", 0.0),
         ])
         .with_position(0.0, 0.0, 0.0)
         .with_velocity(0.0, 0.0, 0.0)
@@ -54,6 +55,7 @@ fn orbit_circular_cosine() {
             ("altitude", 500_000.0),
             ("inclination", 90.0),
             ("argument of periapsis", 0.0),
+            ("longitude of ascending node", 0.0),
         ])
         .with_position(0.0, 0.0, 0.0)
         .with_velocity(0.0, 0.0, 0.0)

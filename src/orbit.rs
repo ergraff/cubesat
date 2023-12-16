@@ -79,6 +79,10 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
         .argument_of_periapsis
         .as_ref()
         .expect("No argument of periapsis is set!");
+    let lan = parameters
+        .longitude_of_ascending_node
+        .as_ref()
+        .expect("No longitude of ascending node is set!");
     let acc = cubesat
         .acc
         .as_mut()
@@ -109,8 +113,9 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
         omega * alt * (omega * time.now).cos(),
         0.0,
     )
+    .rot_z(*ap * ang_to_rad)
     .rot_y(*inc * ang_to_rad)
-    .rot_z(*ap * ang_to_rad);
+    .rot_z(*lan * ang_to_rad);
 
     // x'' = -w^2 * r * cos(wt)
     // y'' = -w^2 * r * sin(wt)
@@ -119,8 +124,9 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
         -omega * omega * alt * (omega * time.now).sin(),
         0.0,
     )
+    .rot_z(*ap * ang_to_rad)
     .rot_y(*inc * ang_to_rad)
-    .rot_z(*ap * ang_to_rad);
+    .rot_z(*lan * ang_to_rad);
 }
 
 #[allow(non_snake_case)]
