@@ -1,0 +1,58 @@
+name = "CubeSat1"
+safe_limit = 20.0
+
+# Orbit
+orbit_type = 1 # Parametric
+
+[orbit_parameters]
+#radius = 6871000.0
+semi_major_axis = 6871000.0
+eccentricity = 0.1
+inclination = 20.0
+argument_of_periapsis = 25.0
+longitude_of_ascending_node = 15.0
+
+[time]
+now = 0.0
+start = 0.0
+step = 1.0
+end = 10000.0
+
+[sun]
+x = -1.0
+y = 0.0
+z = 0.0
+
+# Solar panels
+[[solar_panels]]
+power_generation = 1.0
+orientation = [1.0, 0.0, 0.0]
+[[solar_panels]]
+power_generation = 1.0
+orientation = [-1.0, 0.0, 0.0]
+[[solar_panels]]
+power_generation = 1.0
+orientation = [0.0, 1.0, 0.0]
+[[solar_panels]]
+power_generation = 1.0
+orientation = [0.0, -1.0, 0.0]
+[[solar_panels]]
+power_generation = 1.0
+orientation = [0.0, 0.0, 1.0]
+[[solar_panels]]
+power_generation = 1.0
+orientation = [0.0, 0.0, -1.0]
+
+# EPS
+[eps]
+consumption = -0.3
+charge = 10.0
+max_charge = 10.0
+
+# Other components
+[[components]]
+name = "ADCS"
+consumption_passive = -0.2
+consumption_active = -0.4
+activation_interval = 100.0
+activation_duration = 10.0

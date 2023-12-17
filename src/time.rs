@@ -17,6 +17,7 @@ pub struct Time {
 }
 
 impl Time {
+    #[allow(unused)]
     pub fn new(start_time: f64, end_time: f64, time_step: f64) -> Self {
         Time {
             now: start_time,

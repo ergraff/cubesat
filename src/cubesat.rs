@@ -58,6 +58,7 @@ impl CubeSat {
         toml::from_str(&file).unwrap()
     }
 
+    #[allow(unused)]
     pub fn new() -> Self {
         CubeSat {
             name: None,
@@ -407,7 +408,7 @@ impl CubeSat {
             self.save_history();
 
             // DEBUG Print
-            self.print();
+            // self.print();
 
             // Calculate power generation
             let generation = self.get_power_generation();
@@ -426,8 +427,12 @@ impl CubeSat {
             // Next time step
             self.iterate();
         }
+
+        // Save history
+        self.history.write(&self.name.as_ref().unwrap());
     }
 
+    #[allow(unused)]
     pub fn print(&self) {
         // Name
         match &self.name {
@@ -659,9 +664,11 @@ impl History {
         }
     }
 
-    pub fn write(&self, file_name: &str) {
+    pub fn write(&self, name: &str) {
+        // File path
+        let path = format!("{}{}.csv", "./output/", name);
         // Open file
-        let file = File::create(file_name);
+        let file = File::create(&path);
         if let Err(e) = file {
             println!("File could not be opened due to \"{}\"!", e);
             return;
@@ -705,6 +712,6 @@ impl History {
             }
         }
 
-        println!("File '{}' was written successfully!", file_name);
+        println!("File '{}.csv' was written successfully!\n", name);
     }
 }

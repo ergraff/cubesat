@@ -13,6 +13,7 @@ pub struct SolarPanel {
 }
 
 impl SolarPanel {
+    #[allow(unused)]
     pub fn new(power_generation: f64, x: f64, y: f64, z: f64) -> Self {
         SolarPanel {
             orientation: vector::Vector3::new(x, y, z),
@@ -47,6 +48,7 @@ pub struct Eps {
 }
 
 impl Eps {
+    #[allow(unused)]
     pub fn new(power_consumption: f64, max_charge: f64) -> Self {
         Eps {
             consumption: power_consumption,
@@ -93,6 +95,7 @@ pub struct Component {
 }
 
 impl Component {
+    #[allow(unused)]
     pub fn new(
         name: &str,
         consumption_passive: f64,
@@ -110,6 +113,7 @@ impl Component {
         }
     }
 
+    #[allow(unused)]
     pub fn print(&self) {
         let name = &self.name;
         let active = self.active;

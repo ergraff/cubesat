@@ -30,6 +30,7 @@ pub struct OrbitParameters {
 }
 
 impl OrbitParameters {
+    #[allow(unused)]
     pub fn new() -> Self {
         OrbitParameters {
             radius: None,
