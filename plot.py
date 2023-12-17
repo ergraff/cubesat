@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import sys
 
 def read_csv(file: str):
     with open(file, 'r') as f:
@@ -13,7 +14,10 @@ def read_csv(file: str):
 
 
 def main():
-    csv = read_csv("history.csv")
+    if len(sys.argv) == 1:
+        print("No name was given!")
+        return
+    csv = read_csv(f"./output/{sys.argv[1]}.csv")
 
     # Time
     time = [float(line[0]) for line in csv[1:]]
@@ -59,6 +63,7 @@ def main():
 
     # Create plots
     fig, axs = plt.subplots(4,2)
+    fig.suptitle(f"{sys.argv[1]}")
 
     # Plot position
     axs[0, 0].plot(time, pos_x,'r')

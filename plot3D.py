@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 def read_csv(file: str):
     with open(file, 'r') as f:
@@ -14,7 +15,10 @@ def read_csv(file: str):
 
 
 def main():
-    csv = read_csv("history.csv")
+    if len(sys.argv) == 1:
+        print("No name was given!")
+        return
+    csv = read_csv(f"./output/{sys.argv[1]}.csv")
 
     # Time
     time = [float(line[0]) for line in csv[1:]]
@@ -40,6 +44,7 @@ def main():
     ax.plot_surface(x,y,z, zorder=0)
     ax.plot(pos_x, pos_y, pos_z, zorder=5)
     ax.set(xlabel='x [m]', ylabel='y [m]', zlabel='z [m]')
+    ax.set_title(f"{sys.argv[1]}")
     ax.legend(['Earth','Position'])
     ax.set_aspect('equal')
     plt.show()
