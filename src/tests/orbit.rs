@@ -2,16 +2,10 @@
 use crate::orbit::*;
 
 #[test]
-fn is_none() {
-    let none = OrbitParameters::new();
-    assert_eq!(none.radius, Option::None);
-}
-
-#[test]
 fn five_hundred_kilometers() {
     let mut five_hundred = OrbitParameters::new();
-    five_hundred.set_altitude(500_000.0);
-    assert_eq!(five_hundred.radius, Option::Some(RADIUS_EARTH + 500_000.0))
+    five_hundred.set_semi_major_axis(500_000.0);
+    assert_eq!(five_hundred.semi_major_axis, Option::Some(500_000.0))
 }
 
 #[test]
@@ -20,7 +14,7 @@ fn orbit_circular_cosine() {
     let mut cubesat = cubesat::CubeSat::new()
         .with_orbit_type("circular cosine")
         .with_orbit_parameters(vec![
-            ("altitude", 500_000.0),
+            ("semi-major axis", 500_000.0 + RADIUS_EARTH),
             ("inclination", 0.0),
             ("argument of periapsis", 0.0),
             ("longitude of ascending node", 0.0),
@@ -52,7 +46,7 @@ fn orbit_circular_cosine() {
     let mut cubesat = cubesat::CubeSat::new()
         .with_orbit_type("circular cosine")
         .with_orbit_parameters(vec![
-            ("altitude", 500_000.0),
+            ("semi-major axis", 500_000.0 + RADIUS_EARTH),
             ("inclination", 90.0),
             ("argument of periapsis", 0.0),
             ("longitude of ascending node", 0.0),

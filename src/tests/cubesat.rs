@@ -7,7 +7,6 @@ fn new_toml_complete() {
 
     let orbit_type = orbit::OrbitType::CircularCosine;
     let params = orbit::OrbitParameters {
-        radius: Some(6871000.0),
         inclination: Some(0.0),
         argument_of_periapsis: Some(0.0),
         longitude_of_ascending_node: Some(0.0),
@@ -128,7 +127,6 @@ fn with_orbit_parameters() {
     ]);
     assert_ne!(cubesat.orbit_parameters, None);
     let params = cubesat.orbit_parameters.unwrap();
-    assert_eq!(params.radius.unwrap(), orbit::RADIUS_EARTH + 500_000.0);
     assert_eq!(params.inclination.unwrap(), 0.1);
     assert_eq!(params.argument_of_periapsis.unwrap(), 1.0);
     assert_eq!(params.longitude_of_ascending_node.unwrap(), 1.0);

@@ -9,11 +9,10 @@ safe_limit = 20.0
 orbit_type = 0 # CircularCosine
 
 [orbit_parameters]
-radius = 6871000.0
+semi_major_axis = 6871000.0
 inclination = 0.0
 argument_of_periapsis = 0.0
 longitude_of_ascending_node = 0.0
-semi_major_axis = 6871000.0
 eccentricity = 0.0
 
 [time]

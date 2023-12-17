@@ -108,14 +108,13 @@ impl CubeSat {
         let mut parameters = orbit::OrbitParameters::new();
         for p in orbit_parameters {
             match p {
-                ("altitude", r) => parameters.set_altitude(r),
+                ("semi-major axis", a) => parameters.set_semi_major_axis(a),
                 ("inclination", i) => parameters.set_inclination(i),
                 ("argument of periapsis", ap) => parameters.set_argument_of_periapsis(ap),
                 ("longitude of ascending node", lan) => {
                     parameters.set_longitude_of_ascending_node(lan);
                 }
 
-                ("semi-major axis", a) => parameters.set_semi_major_axis(a),
                 ("eccentricity", e) => parameters.set_eccentricity(e),
                 _ => {}
             }
@@ -445,8 +444,8 @@ impl CubeSat {
         }
         match &self.orbit_parameters {
             Some(p) => {
-                if let Some(r) = p.radius {
-                    println!("\t\tAltitude: {r} m");
+                if let Some(a) = p.semi_major_axis {
+                    println!("\t\tSemi-major axis: {a} m");
                 }
             }
             None => println!("\t\tNo orbit parameters are set!"),
