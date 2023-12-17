@@ -16,7 +16,7 @@ fn main() {
         for file in files {
             let f = file.expect("Unable to read file!").path();
             let name = f.file_name().unwrap().to_str().unwrap();
-            println!("Simulating '{}'", name);
+            println!("Simulating '{name}'");
 
             let mut cubesat = cubesat::CubeSat::from_toml(f.to_str().unwrap());
             cubesat.simulate();

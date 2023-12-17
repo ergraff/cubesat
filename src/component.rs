@@ -32,10 +32,10 @@ impl SolarPanel {
             .negative()
             .angle_to(sun);
 
-        // match angle, with cosine
-        match angle >= std::f64::consts::FRAC_PI_2 {
-            true => 0.0,
-            false => self.power_generation * angle.cos(),
+        if angle >= std::f64::consts::FRAC_PI_2 {
+            0.0
+        } else {
+            self.power_generation * angle.cos()
         }
     }
 }
@@ -117,16 +117,13 @@ impl Component {
     pub fn print(&self) {
         let name = &self.name;
         let active = self.active;
-        let consumption = match self.active {
-            true => self
-                .consumption_active
-                .expect("No active consumption is set!"),
-            false => self.consumption_passive,
+        let consumption = if self.active {
+            self.consumption_active
+                .expect("Cno active consumption is set!")
+        } else {
+            self.consumption_passive
         };
-        println!(
-            "\t\tName: {}, active: {}, consumption: {} W",
-            name, active, consumption
-        );
+        println!("\t\tName: {name}, active: {active}, consumption: {consumption} W");
     }
 
     // Default values for deserialization

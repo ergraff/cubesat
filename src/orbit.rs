@@ -7,10 +7,10 @@ use crate::vector;
 use serde::Deserialize;
 use serde_repr::Deserialize_repr;
 
-static CONST_G: f64 = 6.6743015e-11; // [N*m^2*kg^-2]
-static MASS_EARTH: f64 = 5.9722e24; // [kg]
+static CONST_G: f64 = 6.674_301_5e-11; // [N*m^2*kg^-2]
+static MASS_EARTH: f64 = 5.972_2e24; // [kg]
 static CONST_MU: f64 = CONST_G * MASS_EARTH;
-pub static RADIUS_EARTH: f64 = 6.3781e6; // [m]
+pub static RADIUS_EARTH: f64 = 6.378_1e6; // [m]
 
 #[derive(Debug, PartialEq, Deserialize_repr)]
 #[repr(u8)]
@@ -145,8 +145,8 @@ pub fn orbit_parametric(cubesat: &mut cubesat::CubeSat) {
         .eccentricity
         .as_ref()
         .expect("No eccentricity is set!");
-    if ecc == &0.0 {
-        panic!("Parametric orbit not possible with e = 0.0!");
+    if ecc.abs() < std::f64::EPSILON {
+        panic!("Parametric orbit not possible with e extremely close to 0.0! Use CircularCosine instead.");
     }
     let t = cubesat.time.as_ref().expect("No time is set!").now;
     let pos = cubesat.pos.as_mut().expect("No position vector is set!");

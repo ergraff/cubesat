@@ -502,7 +502,7 @@ fn update_active_components() {
     for _ in 0..3 {
         cubesat.iterate();
         cubesat.update_active_components(
-            &cubesat.time.as_ref().unwrap().now.clone(),
+            cubesat.time.as_ref().unwrap().now.clone(),
             cubesat.safe_mode.clone(),
         );
     }
@@ -512,7 +512,7 @@ fn update_active_components() {
     for _ in 0..2 {
         cubesat.iterate();
         cubesat.update_active_components(
-            &cubesat.time.as_ref().unwrap().now.clone(),
+            cubesat.time.as_ref().unwrap().now.clone(),
             cubesat.safe_mode.clone(),
         );
     }
@@ -521,7 +521,7 @@ fn update_active_components() {
     // Active again
     cubesat.iterate();
     cubesat.update_active_components(
-        &cubesat.time.as_ref().unwrap().now.clone(),
+        cubesat.time.as_ref().unwrap().now.clone(),
         cubesat.safe_mode.clone(),
     );
     assert_eq!(cubesat.components.as_ref().unwrap()[0].active, true);

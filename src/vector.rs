@@ -33,17 +33,16 @@ impl Vector3 {
     }
 
     pub fn angle_to(&self, other: &Vector3) -> f64 {
-        let term1 = self.dot(&other);
+        let term1 = self.dot(other);
         let term2 = self.abs() * other.abs();
         let mut frac = term1 / term2;
         if frac < -1.0 {
-            frac = -1.0
+            frac = -1.0;
         }
         if frac > 1.0 {
-            frac = 1.0
+            frac = 1.0;
         }
-        let angle = frac.acos();
-        angle
+        frac.acos() // Angle
     }
 
     pub fn rot_x(self, radians: f64) -> Self {
@@ -53,13 +52,13 @@ impl Vector3 {
         // Round very-near-zero to zero
         let epsilon = std::f64::EPSILON;
         if x.abs() < epsilon {
-            x = 0.0
+            x = 0.0;
         }
         if y.abs() < epsilon {
-            y = 0.0
+            y = 0.0;
         }
         if z.abs() < epsilon {
-            z = 0.0
+            z = 0.0;
         }
         Vector3 { x, y, z }
     }
@@ -71,13 +70,13 @@ impl Vector3 {
         // Round very-near-zero to zero
         let epsilon = std::f64::EPSILON;
         if x.abs() < epsilon {
-            x = 0.0
+            x = 0.0;
         }
         if y.abs() < epsilon {
-            y = 0.0
+            y = 0.0;
         }
         if z.abs() < epsilon {
-            z = 0.0
+            z = 0.0;
         }
         Vector3 { x, y, z }
     }
@@ -89,13 +88,13 @@ impl Vector3 {
         // Round very-near-zero to zero
         let epsilon = std::f64::EPSILON;
         if x.abs() < epsilon {
-            x = 0.0
+            x = 0.0;
         }
         if y.abs() < epsilon {
-            y = 0.0
+            y = 0.0;
         }
         if z.abs() < epsilon {
-            z = 0.0
+            z = 0.0;
         }
         Vector3 { x, y, z }
     }

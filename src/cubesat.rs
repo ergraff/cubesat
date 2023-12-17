@@ -98,7 +98,7 @@ impl CubeSat {
             "parametric" => self.orbit_type = Some(orbit::OrbitType::Parametric),
             t => {
                 self.orbit_type = None;
-                println!("{} is not a valid orbit type!", t);
+                println!("{t} is not a valid orbit type!");
             }
         }
         self
@@ -112,8 +112,9 @@ impl CubeSat {
                 ("inclination", i) => parameters.set_inclination(i),
                 ("argument of periapsis", ap) => parameters.set_argument_of_periapsis(ap),
                 ("longitude of ascending node", lan) => {
-                    parameters.set_longitude_of_ascending_node(lan)
+                    parameters.set_longitude_of_ascending_node(lan);
                 }
+
                 ("semi-major axis", a) => parameters.set_semi_major_axis(a),
                 ("eccentricity", e) => parameters.set_eccentricity(e),
                 _ => {}
@@ -205,7 +206,7 @@ impl CubeSat {
                     consumption_active,
                     activation_interval,
                     activation_duration,
-                )])
+                )]);
             }
         }
         self
@@ -216,7 +217,7 @@ impl CubeSat {
         self
     }
 
-    pub fn update_active_components(&mut self, time: &f64, safe_mode: bool) {
+    pub fn update_active_components(&mut self, time: f64, safe_mode: bool) {
         let components = self.components.as_mut().expect("No components are set!");
         for component in components {
             match (component.activation_interval, component.activation_duration) {
@@ -235,7 +236,7 @@ impl CubeSat {
                 }
                 // Component is incorrectly set
                 _ => {
-                    panic!("Component {:?} is incorrectly set!", component);
+                    panic!("Component {component:?} is incorrectly set!");
                 }
             }
         }
@@ -255,9 +256,7 @@ impl CubeSat {
 
         // Evaluate angle
         let angle = inner.acos();
-        if angle.is_nan() {
-            panic!("angle is NaN!");
-        }
+        assert!(!angle.is_nan(), "angle is NaN!");
 
         // Evaluate result
         let result = pos.abs() * angle.sin();
@@ -390,10 +389,7 @@ impl CubeSat {
             self.check_safety_limit();
 
             // Update active components
-            self.update_active_components(
-                &self.time.expect("No time is set!").now,
-                self.safe_mode.clone(),
-            );
+            self.update_active_components(self.time.expect("No time is set!").now, self.safe_mode);
 
             // Update orbit
             self.update_orbit();
@@ -429,14 +425,14 @@ impl CubeSat {
         }
 
         // Save history
-        self.history.write(&self.name.as_ref().unwrap());
+        self.history.write(self.name.as_ref().unwrap());
     }
 
     #[allow(unused)]
     pub fn print(&self) {
         // Name
         match &self.name {
-            Some(n) => println!("Name: {}", n),
+            Some(n) => println!("Name: {n}"),
             None => println!("No name is set!"),
         }
 
@@ -450,7 +446,7 @@ impl CubeSat {
         match &self.orbit_parameters {
             Some(p) => {
                 if let Some(r) = p.radius {
-                    println!("\t\tAltitude: {} m", r);
+                    println!("\t\tAltitude: {r} m");
                 }
             }
             None => println!("\t\tNo orbit parameters are set!"),
@@ -518,7 +514,7 @@ impl CubeSat {
             Some(v) => v.iter().len(),
             None => 0,
         };
-        println!("\tSolar panels ({}x):", number);
+        println!("\tSolar panels ({number}x):");
         if let Some(panels) = &self.solar_panels {
             for panel in panels {
                 println!(
@@ -606,6 +602,7 @@ impl History {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn save(
         &mut self,
         time: Option<time::Time>,
@@ -670,15 +667,15 @@ impl History {
         // Open file
         let file = File::create(&path);
         if let Err(e) = file {
-            println!("File could not be opened due to \"{}\"!", e);
+            println!("File could not be opened due to \"{e}\"!");
             return;
         }
 
         // Write header
-        let header = format!("time|position|velocity|acceleration|rotation|rotational velocity|rotational acceleration|sun|charge\n");
+        let header = "time|position|velocity|acceleration|rotation|rotational velocity|rotational acceleration|sun|charge\n".to_string();
         let result = file.as_ref().unwrap().write_all(&header.into_bytes());
         if let Err(e) = result {
-            println!("File could not be saved due to \"{}\"!", e);
+            println!("File could not be saved due to \"{e}\"!");
             return;
         }
 
@@ -707,11 +704,11 @@ impl History {
             );
             let result = file.as_ref().unwrap().write_all(&line.into_bytes());
             if let Err(e) = result {
-                println!("File could not be saved due to \"{}\"!", e);
+                println!("File could not be saved due to \"{e}\"!");
                 return;
             }
         }
 
-        println!("File '{}.csv' was written successfully!\n", name);
+        println!("File '{name}.csv' was written successfully!\n");
     }
 }
