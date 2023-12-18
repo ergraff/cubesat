@@ -28,9 +28,6 @@ def main():
     pos_y = [float(line[1].split(',')[1]) for line in csv[1:]]
     pos_z = [float(line[1].split(',')[2]) for line in csv[1:]]
 
-    # Charge
-    charge = [float(line[8]) for line in csv[1:]]
-
     # Earth
     r = 6.3781*10**6
     u = np.linspace(0, 2 * np.pi, 20)

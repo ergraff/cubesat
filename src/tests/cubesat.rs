@@ -34,7 +34,6 @@ fn new_toml_complete() {
     assert_eq!(cubesat.acc, Some(vec));
     assert_eq!(cubesat.rot, Some(vec));
     assert_eq!(cubesat.rot_vel, Some(vec));
-    assert_eq!(cubesat.rot_acc, Some(vec));
     assert_eq!(cubesat.sun, Some(sun));
     assert_eq!(cubesat.solar_panels.unwrap()[0], panel);
     assert_eq!(cubesat.eps, Some(eps));
@@ -58,7 +57,6 @@ fn new_toml_default() {
     assert_eq!(cubesat.acc, Some(vector::Vector3::origin()));
     assert_eq!(cubesat.rot, Some(vector::Vector3::origin()));
     assert_eq!(cubesat.rot_vel, Some(vector::Vector3::origin()));
-    assert_eq!(cubesat.rot_acc, Some(vector::Vector3::origin()));
     assert_eq!(cubesat.sun, Some(vector::Vector3::new(1.0, 0.0, 0.0)));
     assert_eq!(cubesat.solar_panels, None);
     assert_eq!(cubesat.eps, None);
@@ -81,7 +79,6 @@ fn new() {
     assert_eq!(cubesat.acc, Option::None);
     assert_eq!(cubesat.rot, Option::None);
     assert_eq!(cubesat.rot_vel, Option::None);
-    assert_eq!(cubesat.rot_acc, Option::None);
     assert_eq!(cubesat.sun, Option::None);
     assert_eq!(cubesat.solar_panels, Option::None);
     assert_eq!(cubesat.eps, Option::None);
@@ -396,13 +393,11 @@ fn update_rotation() {
     let mut cubesat_pos = CubeSat::new()
         .with_time(0.0, 10.0, 1.0)
         .with_rotation(0.0, 0.0, 0.0)
-        .with_rotation_velocity(0.0, 0.0, 0.0)
-        .with_rotation_acceleration(1.0, 1.0, 1.0);
+        .with_rotation_velocity(1.0, 1.0, 1.0);
     let mut cubesat_neg = CubeSat::new()
         .with_time(0.0, 10.0, 1.0)
         .with_rotation(0.0, 0.0, 0.0)
-        .with_rotation_velocity(0.0, 0.0, 0.0)
-        .with_rotation_acceleration(-1.0, -1.0, -1.0);
+        .with_rotation_velocity(-1.0, -1.0, -1.0);
 
     for _ in 0..10 {
         cubesat_pos.update_rotation();
@@ -411,26 +406,18 @@ fn update_rotation() {
 
     assert_eq!(
         cubesat_pos.rot,
-        Some(vector::Vector3::new(45.0, 45.0, 45.0))
-    );
-    assert_eq!(
-        cubesat_neg.rot,
-        Some(vector::Vector3::new(-45.0, -45.0, -45.0))
-    );
-    assert_eq!(
-        cubesat_pos.rot_vel,
         Some(vector::Vector3::new(10.0, 10.0, 10.0))
     );
     assert_eq!(
-        cubesat_neg.rot_vel,
+        cubesat_neg.rot,
         Some(vector::Vector3::new(-10.0, -10.0, -10.0))
     );
     assert_eq!(
-        cubesat_pos.rot_acc,
+        cubesat_pos.rot_vel,
         Some(vector::Vector3::new(1.0, 1.0, 1.0))
     );
     assert_eq!(
-        cubesat_neg.rot_acc,
+        cubesat_neg.rot_vel,
         Some(vector::Vector3::new(-1.0, -1.0, -1.0))
     );
 }

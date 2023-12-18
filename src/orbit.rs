@@ -65,6 +65,10 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
     // Guards and values
     let pos = cubesat.pos.as_mut().expect("No position vector is set!");
     let vel = cubesat.vel.as_mut().expect("No velocity vector is set!");
+    let acc = cubesat
+        .acc
+        .as_mut()
+        .expect("No acceleration vector is set!");
     let parameters = cubesat
         .orbit_parameters
         .as_ref()
@@ -85,10 +89,6 @@ pub fn orbit_circular_cosine(cubesat: &mut cubesat::CubeSat) {
         .longitude_of_ascending_node
         .as_ref()
         .expect("No longitude of ascending node is set!");
-    let acc = cubesat
-        .acc
-        .as_mut()
-        .expect("No acceleration vector is set!");
     let time = cubesat.time.as_ref().expect("No time is set!");
     let omega = (radius.powi(3) / (CONST_G * MASS_EARTH)).powf(-0.5);
     let ang_to_rad = std::f64::consts::PI / 180.0;

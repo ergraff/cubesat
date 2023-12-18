@@ -47,18 +47,13 @@ def main():
     rot_vel_y = [float(line[5].split(',')[1]) for line in csv[1:]]
     rot_vel_z = [float(line[5].split(',')[2]) for line in csv[1:]]
 
-    # Rotational acceleration
-    rot_acc_x = [float(line[6].split(',')[0]) for line in csv[1:]]
-    rot_acc_y = [float(line[6].split(',')[1]) for line in csv[1:]]
-    rot_acc_z = [float(line[6].split(',')[2]) for line in csv[1:]]
-
     # Sun
-    sun_x = [float(line[7].split(',')[0]) for line in csv[1:]]
-    sun_y = [float(line[7].split(',')[1]) for line in csv[1:]]
-    sun_z = [float(line[7].split(',')[2]) for line in csv[1:]]
+    sun_x = [float(line[6].split(',')[0]) for line in csv[1:]]
+    sun_y = [float(line[6].split(',')[1]) for line in csv[1:]]
+    sun_z = [float(line[6].split(',')[2]) for line in csv[1:]]
 
     # Charge
-    charge = [float(line[8]) for line in csv[1:]]
+    charge = [float(line[7]) for line in csv[1:]]
 
 
     # Create plots
@@ -110,29 +105,20 @@ def main():
     axs[2, 0].legend(['x','y','z'])
     axs[2, 0].grid()
 
-    # Plot rotational acceleration
-    axs[2, 1].plot(time, rot_acc_x,'r')
-    axs[2, 1].plot(time, rot_acc_y,'g')
-    axs[2, 1].plot(time, rot_acc_z,'b')
-    axs[2, 1].set_title('Rot. acc.')
-    axs[2, 1].set(xlabel='Time [s]', ylabel='[deg/s²]')
+    # Plot sun
+    axs[2, 1].plot(time, sun_x,'r')
+    axs[2, 1].plot(time, sun_y,'g')
+    axs[2, 1].plot(time, sun_z,'b')
+    axs[2, 1].set_title('Sun vector')
+    axs[2, 1].set(xlabel='Time [s]')
     axs[2, 1].legend(['x','y','z'])
     axs[2, 1].grid()
 
-    # Plot sun
-    axs[3, 0].plot(time, sun_x,'r')
-    axs[3, 0].plot(time, sun_y,'g')
-    axs[3, 0].plot(time, sun_z,'b')
-    axs[3, 0].set_title('Sun vector')
-    axs[3, 0].set(xlabel='Time [s]')
-    axs[3, 0].legend(['x','y','z'])
-    axs[3, 0].grid()
-
     # Plot charge
-    axs[3, 1].plot(time, charge)
-    axs[3, 1,].set_title('Charge')
-    axs[3, 1].set(xlabel='Time [s]', ylabel='[Wh]')
-    axs[3, 1].grid()
+    axs[3, 0].plot(time, charge)
+    axs[3, 0].set_title('Charge')
+    axs[3, 0].set(xlabel='Time [s]', ylabel='[Wh]')
+    axs[3, 0].grid()
 
     # Plot
     plt.show()
